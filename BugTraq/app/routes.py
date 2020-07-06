@@ -11,12 +11,16 @@ def index():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if session.get('username'):
+        return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
         email = form.email.data
         password = form.password.data
         user = User.query.filter_by(email=email).first()
         if user and user.get_password(password):
+            session['user_id'] = user.user_id
+            session['username'] = user.username
             flash("You are successfully logged in!","success")
             return redirect("/index")
         else:
@@ -25,10 +29,14 @@ def login():
 
 @app.route("/logout")
 def logout():
+    session['user_id']=False
+    session['username']=False
     return redirect(url_for('index'))
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    if session.get('username'):
+        return redirect(url_for('index'))
     form = RegisterForm()
     if form.validate_on_submit():
         user_id = len(User.query.all()) +1
@@ -55,3 +63,7 @@ def user():
     # guest_user.save()
     users = User.query.all()
     return render_template('user.html', users=users)
+
+@app.route("/projects")
+def projects():
+    return render_template("projects.html", title="Projects", projects=True)
