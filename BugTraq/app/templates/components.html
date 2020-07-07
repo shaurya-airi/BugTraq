@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>{{title}}</h2>
+
+<h4>Business Year: {{'2019-2020'}}</h4>
+
+    <div>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col">Component ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Project Id</th>
+                <th scope="col">Project Name</th>
+                <!-- <th scope="col">Project Name</th> -->
+            </tr>
+            </thead>
+            <tbody>
+
+            <!-- Construct the rest of courses here -->
+
+            {% for component in all_components %}
+            <tr>
+                <td scope='row'>{{component["component_id"]}}</td>
+                <td>{{component["name"]}}</td>
+                <td>{{project.project_id}}</td>
+                <td>{{project.title}}</td>
+            </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

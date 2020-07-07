@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, request, Response, json, flash, redirect, get_flashed_messages, url_for, session, jsonify
-from app.models import User, Project
+from app.models import User, Project, Component
 from app.forms import LoginForm, RegisterForm
 from datetime import datetime
 
@@ -71,9 +71,27 @@ def user():
 
 @app.route("/projects")
 def projects():
+    if not session.get('username'):
+        return redirect(url_for('index'))
     # project1 = Project(project_id=1, title="BugTraq", description="Feature Tracking Application", start=datetime(2020,7,1), end=datetime(2020,10,1))
     # project1.save()
     # project2 = Project(project_id=2, title="Content Aggregator", description="Feature Tracking Application", start=datetime(2020,7,1), end=datetime(2020,10,1))
     # project2.save()
     all_projects = Project.query.all()
     return render_template("projects.html", title="Projects", all_projects=all_projects, projects=True)
+
+@app.route("/components/<project_id>")
+def components(project_id=None):
+    if not session.get('username'):
+        return redirect(url_for('index'))
+    if not project_id:
+        redirect(url_for('/projects'))
+    # comp1 = Component(component_id=1, name="Database", project_id=project_id)
+    # comp1.save()
+    # comp2 = Component(component_id=2, name="Icon", project_id=project_id)
+    # comp2.save()
+    # comp3 = Component(component_id=3, name="Images", project_id=project_id)
+    # comp3.save()
+    all_components = Component.query.filter_by(project_id=project_id)
+    project = Project.query.filter_by(project_id=project_id).first()
+    return render_template("components.html", title="Components",all_components=all_components, project=project, components=True)
