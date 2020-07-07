@@ -1,6 +1,8 @@
 import flask
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
+
 
 class User(db.Model):
 
@@ -23,3 +25,19 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+
+class Project(db.Model):
+    # project_id, title, description, start, end
+    project_id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(50), unique=True, nullable=False)
+    description = db.Column(db.String(80), nullable=False)
+    start = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    end =  db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return '<Project %r>' % self.username

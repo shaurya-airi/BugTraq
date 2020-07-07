@@ -4,11 +4,36 @@
 {% block content %}
 <h2>{{title}}</h2>
 
-<div class="container">
-    <form name="projects" action="" method="post" novalidate>
-        <p>{{"1. BugTraq"}}</p>
-        <p>{{"2. Content Aggregator"}}</p>
-        <p>{{"3. Some Future Projects"}}</p>
-    </form>
-</div>
+<h4>Business Year: {{'2019-2020'}}</h4>
+
+    <div>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col">Project ID</th>
+                <th scope="col">Title</th>
+                <th scope="col">Description</th>
+                <th scope="col">Start</th>
+                <th scope="col">Estimated End</th>
+                <!-- <th scope="col">Enroll</th> -->
+            </tr>
+            </thead>
+            <tbody>
+
+            <!-- Construct the rest of courses here -->
+
+            {% for project in all_projects %}
+            <tr>
+                <td scope='row'>{{project["project_id"]}}</td>
+                <td>{{project["title"]}}</td>
+                <td>{{project["description"]}}</td>
+                <td>{{project["start"]}}</td>
+                <td>{{project["end"]}}</td>
+
+            </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
