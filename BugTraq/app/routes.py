@@ -1,6 +1,6 @@
 from app import app, db, add_data
 from flask import render_template, request, Response, json, flash, redirect, get_flashed_messages, url_for, session, jsonify
-from app.models import User, Project, Component
+from app.models import User, Project, Component, ComponentRelation, Assignee, Reporter, FixVersion, CC, Bug, Status, IssueType, Priority
 from app.forms import LoginForm, RegisterForm
 from datetime import datetime
 
@@ -92,20 +92,31 @@ def components(project_id=None):
     return render_template("components.html", title="Components",all_components=all_components, project=project, components=True)
 
 
-@app.route("/bug")
-def bugs():
-    if not session.get('username'):
-        return redirect(url_for('index'))
-    all_projects = Project.query.all()
-    return render_template("bugs.html", title="Bugs", bugs=True)
+# @app.route("/bug")
+# def bugs():
+#     if not session.get('username'):
+#         return redirect(url_for('index'))
+#     all_projects = Project.query.all()
+#     return render_template("bugs.html", title="Bugs", bugs=True)
 
+@app.route("/show_bug/id=<bug_id>")
+def show_bugs(bug_id):
+    if not bug_id:
+        redirect(url_for('index'))
+    bug = Bug.query.filter_by(bug_id=bug_id).first()
+    issue_type = IssueType.query.filter_by(issue_type_id=bug.issue_type_id).first().issue_type
+    status = Status.query.filter_by(status_id=bug.status_id).first().status
+    priority = Priority.query.filter_by(pid=bug.pid).first().priority
+    return render_template("show_bugs.html", Project=Project, bug=bug, issue_type=issue_type, status=status, priority=priority,
+        title="Bugs", User=User, bugs=True)
 
 @app.route("/data")
 def add():
+    return 1
     # return add_data.priority()
     # return add_data.status()
     # return add_data.issue_type()
     # return add_data.assignee()
-    return add_data.bug()
+    # return add_data.bug()
     # return add_data.component()
 

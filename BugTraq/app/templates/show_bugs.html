@@ -1,0 +1,59 @@
+
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>{{title}}</h2>
+
+<h4>Business Year: {{'2020-2021'}}</h4>
+
+    <div>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col">Bug ID</th>
+                <th scope="col">Summary</th>
+                <th scope="col">Description</th>
+                <th scope="col">Project</th>
+                <!-- <th scope="col">Project</th> -->
+                <!-- <th scope="col">Components</th> -->
+                <th scope="col">Created At</th>
+                <th scope="col">Updated At</th>
+                <!-- <th scope="col">Deleted At</th> -->
+                <th scope="col">Status</th>
+                <th scope="col">Priority</th>
+                <th scope="col">Issue Type</th>
+                <th scope="col">Version</th>
+                <th scope="col">Created By</th>
+                <th scope="col">Assignee</th>
+                <th scope="col">Reporter</th>
+                <!-- <th scope="col">CCs</th> -->
+            </tr>
+            </thead>
+            <!-- {%set x = Project.query.filter_by(project_id=bug["project_id"]).first()%} -->
+            <tbody>
+                <tr>
+                    <td scope='row'>{{bug["bug_id"]}}</td>
+                    <td>{{bug["summary"]}}</td>
+                    <td>{{bug["description"]}}</td>
+                    <td>{{Project.query.filter_by(project_id=bug["project_id"]).first()['title']}}</td>
+                    <!-- <td>{{bug["project_id"]}}</td> -->
+                    <td>{{bug["created_at"]}}</td>
+                    <td>{{bug["updated_at"]}}</td>
+                    <td>{{status}}</td>
+                    <td>{{priority}}</td>
+                    <td>{{issue_type}}</td>
+                    <td>{{bug["version"]}}</td>
+                    <td>{{User.query.filter_by(user_id=bug.creator_id).first().username}}</td>
+                    <td>{{User.query.filter_by(user_id=bug.assignee_id).first().username}}</td>
+                    <td>{{User.query.filter_by(user_id=bug.reporter_id).first().username}}</td>
+
+                </tr>
+
+            <!-- {% for bug in all_bugs %}
+
+            {% endfor %} -->
+
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

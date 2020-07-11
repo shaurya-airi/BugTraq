@@ -168,6 +168,7 @@ class CC(db.Model):
 
 
 class ComponentRelation(db.Model):
+    #TODO: Query to add component relation automatically
     component_id = db.Column(db.Integer, db.ForeignKey('component.component_id'), primary_key=True)
     bug_id = db.Column(db.Integer, db.ForeignKey('bug.bug_id'), primary_key=True)
     def save(self):
