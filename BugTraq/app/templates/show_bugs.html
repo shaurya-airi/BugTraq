@@ -2,58 +2,118 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h2>{{title}}</h2>
+<div class="accordion" id="show_bug">
 
-<h4>Business Year: {{'2020-2021'}}</h4>
+    <div class="card">
+        <div class="card-body">
+            <h6>
+                <span class="badge badge-primary">{{status}}</span>
+                <span style="padding-left:6px">Bug {{bug["bug_id"]}}</span>
+                <span style="padding-left:6px">Created at: {{bug.created_at.strftime('%d/%m/%Y')}}</span>
+                <span style="padding-left:6px">Updated at: {{bug.updated_at.strftime('%d/%m/%Y')}}</span>
 
-    <div>
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th scope="col">Bug ID</th>
-                <th scope="col">Summary</th>
-                <th scope="col">Description</th>
-                <th scope="col">Project</th>
-                <!-- <th scope="col">Project</th> -->
-                <!-- <th scope="col">Components</th> -->
-                <th scope="col">Created At</th>
-                <th scope="col">Updated At</th>
-                <!-- <th scope="col">Deleted At</th> -->
-                <th scope="col">Status</th>
-                <th scope="col">Priority</th>
-                <th scope="col">Issue Type</th>
-                <th scope="col">Version</th>
-                <th scope="col">Created By</th>
-                <th scope="col">Assignee</th>
-                <th scope="col">Reporter</th>
-                <!-- <th scope="col">CCs</th> -->
-            </tr>
-            </thead>
-            <!-- {%set x = Project.query.filter_by(project_id=bug["project_id"]).first()%} -->
-            <tbody>
-                <tr>
-                    <td scope='row'>{{bug["bug_id"]}}</td>
-                    <td>{{bug["summary"]}}</td>
-                    <td>{{bug["description"]}}</td>
-                    <td>{{Project.query.filter_by(project_id=bug["project_id"]).first()['title']}}</td>
-                    <!-- <td>{{bug["project_id"]}}</td> -->
-                    <td>{{bug["created_at"]}}</td>
-                    <td>{{bug["updated_at"]}}</td>
-                    <td>{{status}}</td>
-                    <td>{{priority}}</td>
-                    <td>{{issue_type}}</td>
-                    <td>{{bug["version"]}}</td>
-                    <td>{{User.query.filter_by(user_id=bug.creator_id).first().username}}</td>
-                    <td>{{User.query.filter_by(user_id=bug.assignee_id).first().username}}</td>
-                    <td>{{User.query.filter_by(user_id=bug.reporter_id).first().username}}</td>
-
-                </tr>
-
-            <!-- {% for bug in all_bugs %}
-
-            {% endfor %} -->
-
-            </tbody>
-        </table>
+            </h6>
+            <h5 class="card-title"><strong>{{bug["summary"]}}</strong></h5>
+        </div>
     </div>
+    <div class="card">
+        <div class="card-header" id="description">
+            <h2 class="mb-0">
+                <button class="btn btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse_description" aria-expanded="true" aria-controls="collapse_categories">
+                    Description
+                </button>
+            </h2>
+        </div>
+        <div id="collapse_description" class="collapse show" aria-labelledby="description" data-parent="#show_bug">
+            <div class="card-body">
+            {{bug["description"]}}
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header" id="categories">
+            <h2 class="mb-0">
+                <button class="btn btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse_categories" aria-expanded="false" aria-controls="collapse_categories">
+                Categories
+                </button>
+            </h2>
+        </div>
+        <div id="collapse_categories" class="collapse show" aria-labelledby="categories" data-parent="#show_bug">
+            <div class="card-body">
+                <div class="container">
+                    <div class="row">
+                      <div class="col">
+                        Project: <span data-toggle="tooltip" data-placement="bottom" title="{{project.description}}">{{project.title}}</span>
+                      </div>
+                      <div class="col">
+                        Type: {{issue_type}}
+                      </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                        Component: {{"UI"}}
+                        </div>
+                        <div class="col">
+                        Priority: {{priority}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header" id="tracking">
+            <h2 class="mb-0">
+                <button class="btn btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapse_tracking" aria-expanded="false" aria-controls="collapse_tracking">
+                    Tracking
+                </button>
+            </h2>
+        </div>
+        <div id="collapse_tracking" class="collapse show" aria-labelledby="tracking" data-parent="#show_bug">
+            <div class="card-body">
+                <div class="container">
+                    <div class="row">
+                      <div class="col">Status: {{status}}</div>
+                      <div class="col">Version: {{bug.version}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header" id="people">
+            <h2 class="mb-0">
+                <button class="btn btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapse_people" aria-expanded="false" aria-controls="collapse_people">
+                    People
+                </button>
+            </h2>
+        </div>
+        <div id="collapse_people" class="collapse show" aria-labelledby="people" data-parent="#show_bug">
+            <div class="card-body">
+                <div class="container">
+                    <div class="row">
+                      <div class="col">
+                        Assignee: {{assignee.username}}
+                      </div>
+                      <div class="col">
+                        Reporter: {{reporter.username}}
+                      </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                        Created By: {{creator.username}}
+                        </div>
+                        <div class="col">
+                        CC: {{"2 people"}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

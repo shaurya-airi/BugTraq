@@ -17,6 +17,7 @@ def component():
     Component(component_id=1, name="Database", project_id=1).save()
     Component(component_id=2, name="Icon", project_id=1).save()
     Component(component_id=3, name="Images", project_id=1).save()
+    Component(component_id=4, name="UI", project_id=1).save()
     return jsonify_sqlalchemy(Component)
 
 def status():
@@ -69,5 +70,8 @@ def assignee():
 def bug():
     summary = "Checking addition of the first bug after database design is completed"
     description = "Manually added priority, status, issue_types, fix_version, assignee, reporter entries to the BugTraq.db so that Bug could be added."
+    summary_2 = "Create page to display the bug"
+    description_2= "Use bootstrap to add bug page view as desired"
     Bug(bug_id=1, summary=summary, description= description, status_id=2, issue_type_id=1, pid=2, version="0.1.1", reporter_id=3, assignee_id=3, creator_id=3, project_id=1).save()
+    Bug(bug_id=2, summary=summary_2, description= description_2, status_id=2, issue_type_id=1, pid=2, version="0.1.1", reporter_id=3, assignee_id=3, creator_id=session['user_id'], project_id=1).save()
     return jsonify_sqlalchemy(Bug)

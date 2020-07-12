@@ -107,16 +107,21 @@ def show_bugs(bug_id):
     issue_type = IssueType.query.filter_by(issue_type_id=bug.issue_type_id).first().issue_type
     status = Status.query.filter_by(status_id=bug.status_id).first().status
     priority = Priority.query.filter_by(pid=bug.pid).first().priority
-    return render_template("show_bugs.html", Project=Project, bug=bug, issue_type=issue_type, status=status, priority=priority,
-        title="Bugs", User=User, bugs=True)
+    today = datetime.utcnow()
+    project = Project.query.filter_by(project_id=bug.project_id).first()
+    assignee = User.query.filter_by(user_id=bug.assignee_id).first()
+    reporter = User.query.filter_by(user_id=bug.reporter_id).first()
+    creator = User.query.filter_by(user_id=bug.creator_id).first()
+    return render_template("show_bugs.html", project=project, assignee=assignee, creator=creator, reporter=reporter, bug=bug, issue_type=issue_type, status=status, priority=priority,
+        title="Bugs", User=User, bugs=True, today=today)
 
 @app.route("/data")
 def add():
-    return 1
+
     # return add_data.priority()
     # return add_data.status()
     # return add_data.issue_type()
     # return add_data.assignee()
     # return add_data.bug()
     # return add_data.component()
-
+    return 1
