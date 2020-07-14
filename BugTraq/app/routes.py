@@ -92,12 +92,12 @@ def components(project_id=None):
     return render_template("components.html", title="Components",all_components=all_components, project=project, components=True)
 
 
-# @app.route("/bug")
-# def bugs():
-#     if not session.get('username'):
-#         return redirect(url_for('index'))
-#     all_projects = Project.query.all()
-#     return render_template("bugs.html", title="Bugs", bugs=True)
+@app.route("/bug")
+def bugs():
+    if not session.get('username'):
+        return redirect(url_for('index'))
+    bugs_all = Bug.query.all()
+    return render_template("bugs.html", bugs_all=bugs_all, Status=Status, title="All Bugs", bugs=True)
 
 @app.route("/show_bug/id=<bug_id>")
 def show_bugs(bug_id):
@@ -114,6 +114,7 @@ def show_bugs(bug_id):
     creator = User.query.filter_by(user_id=bug.creator_id).first()
     return render_template("show_bugs.html", project=project, assignee=assignee, creator=creator, reporter=reporter, bug=bug, issue_type=issue_type, status=status, priority=priority,
         title="Bugs", User=User, bugs=True, today=today)
+
 
 @app.route("/data")
 def add():
