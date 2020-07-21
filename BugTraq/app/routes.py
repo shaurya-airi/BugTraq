@@ -1,7 +1,7 @@
 from app import app, db, add_data
 from flask import render_template, request, Response, json, flash, redirect, get_flashed_messages, url_for, session, jsonify
 from app.models import User, Project, Component, ComponentRelation, Assignee, Reporter, FixVersion, CC, Bug, Status, IssueType, Priority
-from app.forms import LoginForm, RegisterForm
+from app.forms import LoginForm, RegisterForm, CreateBugForm
 from datetime import datetime
 
 @app.route("/")
@@ -65,19 +65,11 @@ def user():
     users = User.query.all()
     return render_template('user.html', users=users)
 
-# @app.route("/navigate")
-# def navigate_bugs():
-#     return render_template("navigate_bugs.html", title="Navigation", navigaiton=True)
-
 @app.route("/projects")
 def projects():
     # TODO: Clickable projects to open components pages
     if not session.get('username'):
         return redirect(url_for('index'))
-    # project1 = Project(project_id=1, title="BugTraq", description="Feature Tracking Application", start=datetime(2020,7,1), end=datetime(2020,10,1))
-    # project1.save()
-    # project2 = Project(project_id=2, title="Content Aggregator", description="Feature Tracking Application", start=datetime(2020,7,1), end=datetime(2020,10,1))
-    # project2.save()
     all_projects = Project.query.all()
     return render_template("projects.html", title="Projects", all_projects=all_projects, projects=True)
 
@@ -114,6 +106,29 @@ def show_bugs(bug_id):
     creator = User.query.filter_by(user_id=bug.creator_id).first()
     return render_template("show_bugs.html", project=project, assignee=assignee, creator=creator, reporter=reporter, bug=bug, issue_type=issue_type, status=status, priority=priority,
         title="Bugs", User=User, bugs=True, today=today)
+
+
+@app.route("/create_bug", methods=["GET", "POST"])
+def create_bugs():
+    form = CreateBugForm()
+    if form.validate_on_submit():
+        # user_id = len(User.query.all()) +1
+        summary = form.summary.data
+        description = form.description.data
+        status_id = form.status.data
+        issue_type_id = form.issue_type.data
+        pid = form.priority.data
+        version = form.version.data
+        # components = form.components.data
+        reporter_id = form.reporter.data
+        assignee_id = form.assignee.data
+        # creator_id = form.creator.data
+        project_id = form.project.data
+        Bug( summary=summary, description= description, status_id=status_id, issue_type_id=issue_type_id,
+            pid=pid, version=version, reporter_id=reporter_id, assignee_id=assignee_id, creator_id=session['user_id'], project_id=project_id).save()
+        flash("Bug is successfully created!","success")
+        return redirect(url_for('bugs'))
+    return render_template("create_bug.html", form=form, title="Create Bug", create_bug=True)
 
 
 @app.route("/data")

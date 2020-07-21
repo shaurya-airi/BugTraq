@@ -1,0 +1,86 @@
+{% extends "bootstrap/base.html"%}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+    Create Bug
+{% endblock %}
+
+{% block content %}
+    <form name="create_bug" action="" method="post" novalidate>
+        {{ form.hidden_tag() }}           
+
+            <p> {{ form.summary.label }}<br>
+                {{ form.summary }}
+                {% for error in form.summary.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+            
+
+            <p> {{ form.description.label }}<br>
+                {{ form.description }}
+                {% for error in form.description.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+            
+            <p> {{ form.status.label }}<br>
+                {{ form.status }}
+                {% for error in form.status.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+            
+            <p> {{ form.issue_type.label }}<br>
+                {{ form.issue_type }}
+                {% for error in form.issue_type.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+            
+
+            <p> {{ form.priority.label }}<br>
+                {{ form.priority }}
+                {% for error in form.priority.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+            
+            <p> {{ form.version.label }}<br>
+                {{ form.version }}
+                {% for error in form.version.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+            
+            <p> {{ form.reporter.label }}<br>
+                {{ form.reporter }}
+                {% for error in form.reporter.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+            
+            <p> {{ form.assignee.label }}<br>
+                {{ form.assignee }}
+                {% for error in form.assignee.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+            
+            <p> {{ form.project.label }}<br>
+                {{ form.project }}
+                {% for error in form.project.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            
+            
+
+
+            <p>
+                {{ form.submit() }}
+            </p>
+    </form>
+{% endblock %}
+

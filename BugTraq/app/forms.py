@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, ValidationError, Email, Length, EqualTo
-from app.models import User
+from wtforms import BooleanField, IntegerField, PasswordField, SelectField, StringField, SubmitField, SelectMultipleField
+from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError, InputRequired
+from app.models import User, Project, Component, ComponentRelation, Assignee, Reporter, FixVersion, CC, Bug, Status, IssueType, Priority
+
 
 class LoginForm(FlaskForm):
     #TODO: Login using username or email
@@ -29,3 +30,24 @@ class RegisterForm(FlaskForm):
         if user:
             raise ValidationError("Username is already in use.")
 # TODO: Handle: Getting two errors:  Field must be between 6 and 50 characters long. Field must be equal to and  Username is already in use.
+
+class CreateBugForm(FlaskForm):
+    summary = StringField("Summary", validators=[DataRequired(), Length(1, 72)])
+    description = StringField("Description", validators=[DataRequired(), Length(1,256)])
+    status_choices = [(item.status_id, item.status) for item in Status.query.order_by('status_id')]
+    issue_type_choices = [(item.issue_type_id, item.issue_type) for item in IssueType.query.order_by('issue_type_id')]
+    priority_choices = [(item.pid, item.priority) for item in Priority.query.order_by('pid')]
+    reporter_choices = [(item.user_id, User.query.filter_by(user_id=item.user_id).first().username) for item in Reporter.query.order_by('user_id')]
+    assignee_choices = [(item.user_id, User.query.filter_by(user_id=item.user_id).first().username) for item in Assignee.query.order_by('user_id')]
+    project_choices = [(item.project_id, item.title) for item in Project.query.order_by('project_id')]
+    status = SelectField("Status", choices=status_choices, validate_choice=False)
+    issue_type = SelectField("Issue Type", choices=issue_type_choices, validate_choice=False)
+    priority = SelectField("Priority", choices=priority_choices, validate_choice=False)
+    version = StringField("Version", validators=[DataRequired(), Length(1, 30)])
+    # components = SelectMultipleField("Components", choices=_choices, validators=[DataRequired(), Length(2, 50)])
+    reporter = SelectField("Reporter", choices=reporter_choices, validate_choice=False)
+    assignee = SelectField("Assignee", choices=assignee_choices, validate_choice=False)
+    # creator = StringField("Creator", validators=[DataRequired(), Length(2, 50)])
+    project = SelectField("Project", choices=project_choices, validate_choice=False)
+    # CC = SelectMultipleField("CC", validators=[DataRequired(), Length(2, 50)])
+    submit = SubmitField("Create")

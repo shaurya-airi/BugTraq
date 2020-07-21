@@ -63,7 +63,7 @@ class Component(db.Model):
 
 class Status(db.Model):
     status_id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.String(30), nullable=False)
+    status = db.Column(db.String(40), nullable=False)
     bugs = db.relationship('Bug', backref='status', lazy=True)
     def save(self):
         db.session.add(self)
@@ -74,7 +74,7 @@ class Status(db.Model):
 
 class IssueType(db.Model):
     issue_type_id = db.Column(db.Integer, primary_key=True)
-    issue_type = db.Column(db.String(30), nullable=False)
+    issue_type = db.Column(db.String(40), nullable=False)
     bugs = db.relationship('Bug', backref='issue_type', lazy=True)
     def save(self):
         db.session.add(self)
