@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, request, Response, json, flash, redirect, get_flashed_messages, url_for, session, jsonify
-from app.models import User, Project, Component, ComponentRelation, Assignee, Reporter, FixVersion, CC, Bug, Status, IssueType, Priority
+from app.models import User, Project, Component, Assignee, Reporter, FixVersion, CC, Bug, Status, IssueType, Priority
 from datetime import datetime
 
 def jsonify_sqlalchemy(sqlalchemy_object):
@@ -75,3 +75,13 @@ def bug():
     Bug(bug_id=1, summary=summary, description= description, status_id=2, issue_type_id=1, pid=2, version="0.1.1", reporter_id=3, assignee_id=3, creator_id=3, project_id=1).save()
     Bug(bug_id=2, summary=summary_2, description= description_2, status_id=2, issue_type_id=1, pid=2, version="0.1.1", reporter_id=3, assignee_id=3, creator_id=session['user_id'], project_id=1).save()
     return jsonify_sqlalchemy(Bug)
+
+
+def components_to_bug(bug_id):
+    bug = Bug.query.get(bug_id)
+    components = [4]
+    for component_id in components:
+        component = Component.query.get(component_id)
+        bug.component.append(component)
+    bug.save()
+    return jsonify(f'{bug.component}')

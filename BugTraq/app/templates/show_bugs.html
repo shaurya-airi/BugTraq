@@ -52,7 +52,11 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                        Component: {{"UI"}}
+                        Component: 
+                        {% for component in components[:-1] %}
+                            <span>{{component.name + ','}}</span>
+                        {% endfor %}
+                        <span>{{components[-1].name}}</span>
                         </div>
                         <div class="col">
                         Priority: {{priority}}

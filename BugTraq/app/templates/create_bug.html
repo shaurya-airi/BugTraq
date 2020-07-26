@@ -7,7 +7,7 @@
 
 {% block content %}
     <form name="create_bug" action="" method="post" novalidate>
-        {{ form.hidden_tag() }}           
+        {{ form.hidden_tag() }}
 
             <p> {{ form.summary.label }}<br>
                 {{ form.summary }}
@@ -15,7 +15,7 @@
                 <span class="error-message">{{ error }}</span>
                 {% endfor %}
             </p>
-            
+
 
             <p> {{ form.description.label }}<br>
                 {{ form.description }}
@@ -23,21 +23,21 @@
                 <span class="error-message">{{ error }}</span>
                 {% endfor %}
             </p>
-            
+
             <p> {{ form.status.label }}<br>
                 {{ form.status }}
                 {% for error in form.status.errors %}
                 <span class="error-message">{{ error }}</span>
                 {% endfor %}
             </p>
-            
+
             <p> {{ form.issue_type.label }}<br>
                 {{ form.issue_type }}
                 {% for error in form.issue_type.errors %}
                 <span class="error-message">{{ error }}</span>
                 {% endfor %}
             </p>
-            
+
 
             <p> {{ form.priority.label }}<br>
                 {{ form.priority }}
@@ -45,28 +45,28 @@
                 <span class="error-message">{{ error }}</span>
                 {% endfor %}
             </p>
-            
+
             <p> {{ form.version.label }}<br>
                 {{ form.version }}
                 {% for error in form.version.errors %}
                 <span class="error-message">{{ error }}</span>
                 {% endfor %}
             </p>
-            
+
             <p> {{ form.reporter.label }}<br>
                 {{ form.reporter }}
                 {% for error in form.reporter.errors %}
                 <span class="error-message">{{ error }}</span>
                 {% endfor %}
             </p>
-            
+
             <p> {{ form.assignee.label }}<br>
                 {{ form.assignee }}
                 {% for error in form.assignee.errors %}
                 <span class="error-message">{{ error }}</span>
                 {% endfor %}
             </p>
-            
+
             <p> {{ form.project.label }}<br>
                 {{ form.project }}
                 {% for error in form.project.errors %}
@@ -74,13 +74,32 @@
                 {% endfor %}
             </p>
 
-            
-            
-
+            <p> {{ form.component.label }}<br>
+                {{ form.component }}
+                {% for error in form.component.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
 
             <p>
                 {{ form.submit() }}
             </p>
     </form>
+    <script>
+        let project_select = document.getElementById('select_project');
+        let component_select = document.getElementById('select_component');
+        project_select.onchange = function(){
+            project_id = project_select.value;
+            fetch('/get_component/' + project_id).then(function(response) {
+                response.json().then(function(data){
+                    let optionHTML = '';
+                    for (let component of data) {
+                        optionHTML += '<option value="' + component.id + '">' + component.name + '</option>';
+                    }
+                    component_select.innerHTML = optionHTML;
+                })
+            });
+        }
+    </script>
 {% endblock %}
 

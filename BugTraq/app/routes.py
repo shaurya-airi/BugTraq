@@ -1,6 +1,6 @@
 from app import app, db, add_data
 from flask import render_template, request, Response, json, flash, redirect, get_flashed_messages, url_for, session, jsonify
-from app.models import User, Project, Component, ComponentRelation, Assignee, Reporter, FixVersion, CC, Bug, Status, IssueType, Priority
+from app.models import User, Project, Component, Assignee, Reporter, FixVersion, CC, Bug, Status, IssueType, Priority
 from app.forms import LoginForm, RegisterForm, CreateBugForm
 from datetime import datetime
 
@@ -83,6 +83,10 @@ def components(project_id=None):
     project = Project.query.filter_by(project_id=project_id).first()
     return render_template("components.html", title="Components",all_components=all_components, project=project, components=True)
 
+@app.route('/get_component/<project_id>')
+def get_component(project_id):
+    components = [{'component_id':row.component_id, 'name':row.name} for row in Component.query.filter_by(project_id=project_id).all()]
+    return jsonify(components)
 
 @app.route("/bug")
 def bugs():
@@ -101,16 +105,18 @@ def show_bugs(bug_id):
     priority = Priority.query.filter_by(pid=bug.pid).first().priority
     today = datetime.utcnow()
     project = Project.query.filter_by(project_id=bug.project_id).first()
+    components = bug.component
     assignee = User.query.filter_by(user_id=bug.assignee_id).first()
     reporter = User.query.filter_by(user_id=bug.reporter_id).first()
     creator = User.query.filter_by(user_id=bug.creator_id).first()
     return render_template("show_bugs.html", project=project, assignee=assignee, creator=creator, reporter=reporter, bug=bug, issue_type=issue_type, status=status, priority=priority,
-        title="Bugs", User=User, bugs=True, today=today)
+        title="Bugs", User=User, bugs=True, today=today, components=components)
 
 
 @app.route("/create_bug", methods=["GET", "POST"])
 def create_bugs():
     form = CreateBugForm()
+    form.component.choices = [(row.component_id, row.name) for row in Component.query.all()]
     if form.validate_on_submit():
         # user_id = len(User.query.all()) +1
         summary = form.summary.data
@@ -119,13 +125,18 @@ def create_bugs():
         issue_type_id = form.issue_type.data
         pid = form.priority.data
         version = form.version.data
-        # components = form.components.data
+        components = form.component.data
         reporter_id = form.reporter.data
         assignee_id = form.assignee.data
-        # creator_id = form.creator.data
+        creator_id = session.get('user_id')
         project_id = form.project.data
-        Bug( summary=summary, description= description, status_id=status_id, issue_type_id=issue_type_id,
-            pid=pid, version=version, reporter_id=reporter_id, assignee_id=assignee_id, creator_id=session['user_id'], project_id=project_id).save()
+
+        bug = Bug( summary=summary, description= description, status_id=status_id, issue_type_id=issue_type_id,
+            pid=pid, version=version, reporter_id=reporter_id, assignee_id=assignee_id, creator_id=session['user_id'], project_id=project_id)
+        for component_id in components:
+            component = Component.query.get(component_id)
+            bug.component.append(component)
+        bug.save()
         flash("Bug is successfully created!","success")
         return redirect(url_for('bugs'))
     return render_template("create_bug.html", form=form, title="Create Bug", create_bug=True)
@@ -140,4 +151,5 @@ def add():
     # return add_data.assignee()
     # return add_data.bug()
     # return add_data.component()
+    # return add_data.components_to_bug(3)
     return 1

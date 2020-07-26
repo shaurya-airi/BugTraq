@@ -47,12 +47,17 @@ class Project(db.Model):
         return '<Project %r>' % self.title
 
 
+component_relation = db.Table('component_relation_table',
+    db.Column('component_id',db.Integer, db.ForeignKey('component.component_id')),
+    db.Column('bug_id',db.Integer, db.ForeignKey('bug.bug_id'))
+)
+
 class Component(db.Model):
     # project_id, title, description, start, end
     component_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
     project_id = db.Column(db.Integer, db.ForeignKey('project.project_id'), nullable=False)
-    component_relations = db.relationship('ComponentRelation', backref='component', lazy=True)
+    component_relation = db.relationship('Bug', secondary=component_relation, lazy='subquery', backref=db.backref('component', lazy=True) )
     def save(self):
         db.session.add(self)
         db.session.commit()
@@ -143,7 +148,6 @@ class Bug(db.Model):
     assignee_id = db.Column(db.Integer, db.ForeignKey('assignee.user_id'), nullable=False)
     creator_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     project_id = db.Column(db.Integer, db.ForeignKey('project.project_id'), nullable=False)
-    component_relations = db.relationship('ComponentRelation', backref='bug', lazy=True)
     ccs = db.relationship('CC', backref='bug', lazy=True)
 
 
@@ -165,16 +169,4 @@ class CC(db.Model):
         return '<User %r, Bug %r>' % (self.user_id, self.bug_id)
 
 
-
-
-class ComponentRelation(db.Model):
-    #TODO: Query to add component relation automatically
-    component_id = db.Column(db.Integer, db.ForeignKey('component.component_id'), primary_key=True)
-    bug_id = db.Column(db.Integer, db.ForeignKey('bug.bug_id'), primary_key=True)
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
-
-    def __repr__(self):
-        return '<Component %r, Bug %r>' % (self.component_id, self.bug_id)
 
