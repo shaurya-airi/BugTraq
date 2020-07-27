@@ -52,4 +52,4 @@ class CreateBugForm(FlaskForm):
     project = SelectField("Project", id='select_project', choices=project_choices, validate_choice=False)
     component = SelectMultipleField("Component", id='select_component', coerce=int, choices=component_choices)
     # CC = SelectMultipleField("CC", validators=[DataRequired(), Length(2, 50)])
-    submit = SubmitField("Create")
+    submit = SubmitField("Submit")
