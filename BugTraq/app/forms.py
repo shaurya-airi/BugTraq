@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, IntegerField, PasswordField, SelectField, StringField, SubmitField, SelectMultipleField
+from wtforms import BooleanField, IntegerField, PasswordField, SelectField, StringField, SubmitField, SelectMultipleField, widgets
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError, InputRequired
 from app.models import User, Project, Component, Assignee, Reporter, FixVersion, CC, Bug, Status, IssueType, Priority
 
@@ -50,6 +50,6 @@ class CreateBugForm(FlaskForm):
     reporter = SelectField("Reporter", choices=reporter_choices, validate_choice=False)
     assignee = SelectField("Assignee", choices=assignee_choices, validate_choice=False)
     project = SelectField("Project", id='select_project', choices=project_choices, validate_choice=False)
-    component = SelectMultipleField("Component", id='select_component', coerce=int, choices=component_choices)
+    component = SelectMultipleField("Component", option_widget=widgets.CheckboxInput(), id='select_component', coerce=int, choices=component_choices)
     # CC = SelectMultipleField("CC", validators=[DataRequired(), Length(2, 50)])
     submit = SubmitField("Submit")
