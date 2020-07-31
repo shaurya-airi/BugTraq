@@ -9,7 +9,7 @@ app.debug = True
 
 app.config.from_object(Config)
 db = SQLAlchemy(app)
-toolbar = DebugToolbarExtension(app)
+# toolbar = DebugToolbarExtension(app)
 Bootstrap(app)
 from .models import User, Project, Component
 db.create_all()

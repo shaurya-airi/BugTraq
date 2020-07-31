@@ -40,13 +40,13 @@ def register():
         return redirect(url_for('index'))
     form = RegisterForm()
     if form.validate_on_submit():
-        user_id = len(User.query.all()) +1
+        # user_id = len(User.query.all()) +1 : Not required as next user_id is created as it is PK in SQL
         username = form.username.data
         email = form.email.data
         password = form.password.data
         first_name = form.first_name.data
         last_name = form.last_name.data
-        user = User(user_id=user_id, username=username, email=email, first_name=first_name, last_name=last_name)
+        user = User(username=username, email=email, first_name=first_name, last_name=last_name)
         user.set_password(password)
         user.save()
         flash("You are successfully registered!","success")
@@ -116,7 +116,6 @@ def show_bugs(bug_id):
 def create_bugs():
     form = CreateBugForm()
     if form.validate_on_submit():
-        # user_id = len(User.query.all()) +1
         summary = form.summary.data
         description = form.description.data
         status_id = form.status.data
@@ -141,7 +140,6 @@ def create_bugs():
 
 @app.route("/edit_bug/<bug_id>", methods=["GET", "POST"])
 def edit_bugs(bug_id):
-    # TODO: Add edit bug button on show bug page
     bug = Bug.query.get_or_404(bug_id)
     form = CreateBugForm(obj=bug)
     # Got components selected
@@ -161,7 +159,6 @@ def edit_bugs(bug_id):
         form.component.data = [c.component_id for c in bug.component]
 
     if request.method == 'POST' and form.validate():
-        # print(bug.status_id)
         components = form.component.data
         bug.summary = form.summary.data
         bug.description = form.description.data

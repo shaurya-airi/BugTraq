@@ -4,24 +4,31 @@
 {% block content %}
     <form name="create_bug" action="" method="post" novalidate>
 
-        <div class="row">
+        <!-- <div class="row">
             <div class="col-md-4">
                 {{ wtf.quick_form(form) }}
             </div>
-        </div>
+        </div> -->
         <!-- TODO: Do a popover form for creating bug: https://getbootstrap.com/docs/4.0/components/popovers/ -->
-        <!--  {{ form.csrf_token()}}
-        {{wtf.form_field(form.summary)}}
-        {{wtf.form_field(form.description)}}
-        {{wtf.form_field(form.status)}}
-        {{wtf.form_field(form.issue_type)}}
-        {{wtf.form_field(form.priority)}}
-        {{wtf.form_field(form.version)}}
-        {{wtf.form_field(form.reporter)}}
-        {{wtf.form_field(form.assignee)}}
-        {{wtf.form_field(form.project)}}
-        {{wtf.form_field(form.component)}}
-        <input class="btn btn-primary" type="submit" value="Submit"> -->
+        <div class="row">
+            <div class="col-md-4">
+                {{ form.csrf_token()}}
+                {{wtf.form_field(form.summary)}}
+                {{wtf.form_field(form.description)}}
+                {{wtf.form_field(form.status)}}
+                {{wtf.form_field(form.issue_type)}}
+                {{wtf.form_field(form.priority)}}
+                {{wtf.form_field(form.version)}}
+                {{wtf.form_field(form.reporter)}}
+                {{wtf.form_field(form.assignee)}}
+                {{wtf.form_field(form.project)}}
+                {{wtf.form_field(form.component)}}
+                <input class="btn btn-primary" onclick="window.history.back()" type="button" value="Cancel">
+                <input class="btn btn-primary" type="submit" value="Submit">
+            </div>
+        </div>
+        <!-- <button onclick="window.history.back()">Back</button> -->
+        
     </form>
     <script>
         let project_select = document.getElementById('select_project');
