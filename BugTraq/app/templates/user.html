@@ -6,8 +6,10 @@
             {% for user in users %}
             <dl>
                 <dt>User ID: {{ user.user_id }}</dt>
+                <dd>Username: {{ user.username }}</dd>
+                <dd>User: {{ user.first_name}} {{user.last_name }}</dd>
                 <dd>Email: {{user.email}}</dd>
-                <dd>Password: {{user.password}}</dd>
+                <!-- <dd>Password: {{user.password}}</dd> -->
             </dl>
             {% else %}
                 <h3>No users yet.</h3>

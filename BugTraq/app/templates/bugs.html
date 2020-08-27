@@ -19,7 +19,7 @@
             <tbody>
 
             <!-- TODO: Add url for function which requires show_bug/id/<bug_id> -->
-            {% for bug in bugs_all %}
+            {% for bug in bugs %}
             <tr onclick="window.location='show_bug/id={{bug.bug_id}}';">
                 <td scope='row'>{{bug["bug_id"]}}</td>
                 <td>{{bug["summary"]}}</td>

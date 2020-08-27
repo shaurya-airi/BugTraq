@@ -53,3 +53,8 @@ class CreateBugForm(FlaskForm):
     component = SelectMultipleField("Component", option_widget=widgets.CheckboxInput(), id='select_component', coerce=int, choices=component_choices)
     # CC = SelectMultipleField("CC", validators=[DataRequired(), Length(2, 50)])
     submit = SubmitField("Submit")
+
+
+class SearchBugForm(FlaskForm):
+    search_input = StringField("Search Bugs", validators=[DataRequired(), Length(1, 72)], render_kw={"placeholder": "Search Bugs"})
+    search = SubmitField("Go")

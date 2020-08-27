@@ -1,8 +1,9 @@
 from app import app, db, add_data
 from flask import render_template, request, Response, json, flash, redirect, get_flashed_messages, url_for, session, jsonify
 from app.models import User, Project, Component, Assignee, Reporter, FixVersion, CC, Bug, Status, IssueType, Priority
-from app.forms import LoginForm, RegisterForm, CreateBugForm
+from app.forms import LoginForm, RegisterForm, CreateBugForm, SearchBugForm
 from datetime import datetime
+from app.filters import *
 
 @app.route("/")
 @app.route("/index")
@@ -89,11 +90,15 @@ def get_component(project_id):
     return jsonify(components)
 
 @app.route("/bug")
-def bugs():
+@app.route("/bug/<field>", methods=["POST", "GET"])
+def bugs(field=None):
     if not session.get('username'):
         return redirect(url_for('index'))
-    bugs_all = Bug.query.all()
-    return render_template("bugs.html", bugs_all=bugs_all, Status=Status, title="All Bugs", bugs=True)
+    if not field:
+        bugs = Bug.query.all()
+    else:
+        bugs = FILTER_DICT[field]
+    return render_template("bugs.html", bugs=bugs, Status=Status, title="All Bugs", all_bugs=True)
 
 @app.route("/show_bug/id=<bug_id>")
 def show_bugs(bug_id):
@@ -178,6 +183,26 @@ def edit_bugs(bug_id):
         flash('The Bug has been Updated Successfully!','success')
         return redirect(url_for('bugs'))
     return render_template("edit_bug.html", form=form, title="Edit Bug", edit_bug=True)
+
+@app.route("/search_bug", methods=["GET", "POST"])
+def search_bugs():
+    # bug = Bug.query.get_or_404(bug_id)
+    form = SearchBugForm()
+    # fields = ['status','issue type','created date','updated date','priority','version','reporter','assignee','creator','project']
+    # fields = ['Recently Updated','Date Created','ACCEPTED','FIXED or FIXED(Verified)',f"{session.get('username')}'s Accepted Bugs'"]
+
+    # # Got components selected
+
+    if request.method == 'GET':
+        search_input  = form.search_input.data
+    if request.method == 'POST':
+        search_input = form.search_input.data
+        # TODO: Either add search and filtering to bugs page or add bugs pages extension to search_bugs
+        for field in FILTER_FIELDS:
+            if request.form.get(field):
+                return redirect(url_for('bugs',field=field))
+
+    return render_template("search_bug.html", form=form, title="Search Bugs",  Status=Status, fields=FILTER_FIELDS, search_bug=True)
 
 @app.route("/data")
 def add():

@@ -107,3 +107,7 @@ footer {
     right: 24em;
     top: 7em;
 }
+
+.no-label .control-label {
+    display: none;
+}
