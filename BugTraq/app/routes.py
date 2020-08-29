@@ -97,7 +97,8 @@ def bugs(field=None):
     if not session.get('username'):
         return redirect(url_for('index'))
     if field:
-        bugs = FILTER_DICT[field]
+        bugs_query = FILTER_DICT[field]
+        bugs = bugs_query()
     elif request.args.get('bug_list'):
         bugs = bug_list
     else:
