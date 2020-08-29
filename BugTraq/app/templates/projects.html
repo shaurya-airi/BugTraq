@@ -23,7 +23,8 @@
             <!-- Construct the rest of courses here -->
 
             {% for project in all_projects %}
-            <tr>
+            {% set bugs_url = url_for('bugs', project_id=project.project_id) %}
+            <tr onclick="window.location='{{bugs_url}}';">
                 <td scope='row'>{{project["project_id"]}}</td>
                 <td>{{project["title"]}}</td>
                 <td>{{project["description"]}}</td>
