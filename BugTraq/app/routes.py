@@ -4,6 +4,8 @@ from app.models import User, Project, Component, Assignee, Reporter, FixVersion,
 from app.forms import LoginForm, RegisterForm, CreateBugForm, SearchBugForm
 from datetime import datetime
 from app.filters import *
+# from sqlalchemy import in_
+bug_list = []
 
 @app.route("/")
 @app.route("/index")
@@ -94,10 +96,12 @@ def get_component(project_id):
 def bugs(field=None):
     if not session.get('username'):
         return redirect(url_for('index'))
-    if not field:
-        bugs = Bug.query.all()
-    else:
+    if field:
         bugs = FILTER_DICT[field]
+    elif request.args.get('bug_list'):
+        bugs = bug_list
+    else:
+        bugs = Bug.query.all()
     return render_template("bugs.html", bugs=bugs, Status=Status, title="All Bugs", all_bugs=True)
 
 @app.route("/show_bug/id=<bug_id>")
@@ -186,17 +190,16 @@ def edit_bugs(bug_id):
 
 @app.route("/search_bug", methods=["GET", "POST"])
 def search_bugs():
-    # bug = Bug.query.get_or_404(bug_id)
     form = SearchBugForm()
-    # fields = ['status','issue type','created date','updated date','priority','version','reporter','assignee','creator','project']
-    # fields = ['Recently Updated','Date Created','ACCEPTED','FIXED or FIXED(Verified)',f"{session.get('username')}'s Accepted Bugs'"]
-
-    # # Got components selected
-
-    if request.method == 'GET':
-        search_input  = form.search_input.data
     if request.method == 'POST':
-        search_input = form.search_input.data
+        # TODO: Check logic for form.validateon search_input
+        if request.form.get('search_input'):
+            bugs, total_matches = Bug.search(request.form.get('search_input'))
+            global bug_list
+            bug_list = bugs
+            return redirect(url_for('bugs',bug_list=bugs))
+        # FILTER PART
+        # TODO: I may need to rethink filter and search separation
         # TODO: Either add search and filtering to bugs page or add bugs pages extension to search_bugs
         for field in FILTER_FIELDS:
             if request.form.get(field):

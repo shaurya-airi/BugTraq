@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import BooleanField, IntegerField, PasswordField, SelectField, StringField, SubmitField, SelectMultipleField, widgets
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError, InputRequired
 from app.models import User, Project, Component, Assignee, Reporter, FixVersion, CC, Bug, Status, IssueType, Priority
-
+from flask import request
 
 class LoginForm(FlaskForm):
     #TODO: Login using username or email
@@ -58,3 +58,10 @@ class CreateBugForm(FlaskForm):
 class SearchBugForm(FlaskForm):
     search_input = StringField("Search Bugs", validators=[DataRequired(), Length(1, 72)], render_kw={"placeholder": "Search Bugs"})
     search = SubmitField("Go")
+
+    def __init__(self, *args, **kwargs):
+        if 'formdata' not in kwargs:
+            kwargs['formdata'] = request.args
+        if 'csrf_enabled' not in kwargs:
+            kwargs['csrf_enabled'] = False
+        super(SearchBugForm, self).__init__(*args, **kwargs)
