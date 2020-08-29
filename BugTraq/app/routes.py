@@ -104,7 +104,7 @@ def bugs(field=None):
         bugs = Bug.query.all()
     return render_template("bugs.html", bugs=bugs, Status=Status, title="All Bugs", all_bugs=True)
 
-@app.route("/show_bug/id=<bug_id>")
+@app.route("/show_bug/<bug_id>")
 def show_bugs(bug_id):
     if not bug_id:
         redirect(url_for('index'))

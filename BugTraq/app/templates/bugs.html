@@ -20,7 +20,8 @@
 
             <!-- TODO: Add url for function which requires show_bug/id/<bug_id> -->
             {% for bug in bugs %}
-            <tr onclick="window.location='show_bug/id={{bug.bug_id}}';">
+            {% set show_bug_url = url_for('show_bugs', bug_id=bug.bug_id) %}
+            <tr onclick="window.location='{{show_bug_url}}';">
                 <td scope='row'>{{bug["bug_id"]}}</td>
                 <td>{{bug["summary"]}}</td>
                 <td>{{bug.created_at.strftime('%d/%m/%Y')}}</td>
