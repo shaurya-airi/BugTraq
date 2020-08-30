@@ -74,3 +74,8 @@ class CreateProjectForm(FlaskForm):
     start = DateField("Project Start Date", validators=[DataRequired()])
     end = DateField("Project End Date", validators=[DataRequired()])
     submit = SubmitField("Submit")
+
+
+class CreateComponentForm(FlaskForm):
+    name = StringField("Component", validators=[DataRequired(), Length(2, 50)])
+    submit = SubmitField("Submit")

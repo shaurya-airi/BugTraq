@@ -1,7 +1,7 @@
 from app import app, db, add_data
 from flask import render_template, request, Response, json, flash, redirect, get_flashed_messages, url_for, session, jsonify
 from app.models import User, Project, Component, Assignee, Reporter, FixVersion, CC, Bug, Status, IssueType, Priority
-from app.forms import LoginForm, RegisterForm, CreateBugForm, SearchBugForm, CreateProjectForm
+from app.forms import LoginForm, RegisterForm, CreateBugForm, SearchBugForm, CreateProjectForm, CreateComponentForm
 from datetime import datetime
 from app.filters import *
 # from sqlalchemy import in_
@@ -87,7 +87,7 @@ def create_project():
         return redirect(url_for('projects'))
     return render_template("create_project.html", form=form, title="Create Project", create_project=True)
 
-@app.route("/components/<project_id>")
+@app.route("/components/<project_id>", methods=['GET','POST'])
 def components(project_id=None):
     if not session.get('username'):
         return redirect(url_for('index'))
@@ -96,6 +96,17 @@ def components(project_id=None):
     all_components = Component.query.filter_by(project_id=project_id)
     project = Project.query.filter_by(project_id=project_id).first()
     return render_template("components.html", title="Components",all_components=all_components, project=project, components=True)
+
+@app.route("/create_component/<project_id>", methods=['GET','POST'])
+def create_component(project_id=None):
+    if not session.get('username'):
+        return redirect(url_for('index'))
+    form = CreateComponentForm()
+    if form.validate_on_submit():
+        component = Component(name = form.name.data, project_id = project_id).save()
+        flash("Component is successfully created!","success")
+        return redirect(url_for('components', project_id=project_id)) #TODO: Check
+    return render_template("create_component.html", form=form, title="Create Component", create_component=True)
 
 @app.route('/get_component/<project_id>')
 def get_component(project_id):

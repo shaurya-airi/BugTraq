@@ -9,7 +9,7 @@
     </div>
     <div class='col'>
         <span style='float:right;'>
-            <a href="{{url_for('create_project',_method='POST')}}" class="btn btn-primary active" role="button" aria-pressed="true">Create</a>
+            <a href="{{url_for('create_project',_method='POST')}}" class="btn btn-primary" role="button" aria-pressed="true">Create</a>
         </span>
     </div>
 </div>
@@ -23,7 +23,7 @@
                 <th scope="col">Description</th>
                 <th scope="col">Start</th>
                 <th scope="col">Estimated End</th>
-                <!-- <th scope="col">Enroll</th> -->
+                <th scope="col">Components</th>
             </tr>
             </thead>
             <tbody>
@@ -38,6 +38,7 @@
                 <td>{{project["description"]}}</td>
                 <td>{{project["start"]}}</td>
                 <td>{{project["end"]}}</td>
+                <td><a href="{{url_for('components', project_id=project.project_id, _method='POST')}}" class="btn btn-primary" role="button" aria-pressed="true">{{project["title"]}}</a></td>
 
             </tr>
             {% endfor %}
