@@ -1,7 +1,7 @@
 from app import app, db, add_data
 from flask import render_template, request, Response, json, flash, redirect, get_flashed_messages, url_for, session, jsonify
 from app.models import User, Project, Component, Assignee, Reporter, FixVersion, CC, Bug, Status, IssueType, Priority
-from app.forms import LoginForm, RegisterForm, CreateBugForm, SearchBugForm
+from app.forms import LoginForm, RegisterForm, CreateBugForm, SearchBugForm, CreateProjectForm
 from datetime import datetime
 from app.filters import *
 # from sqlalchemy import in_
@@ -75,6 +75,17 @@ def projects():
         return redirect(url_for('index'))
     all_projects = Project.query.all()
     return render_template("projects.html", title="Projects", all_projects=all_projects, projects=True)
+
+@app.route("/create_project", methods=['GET','POST'])
+def create_project():
+    if not session.get('username'):
+        return redirect(url_for('index'))
+    form = CreateProjectForm()
+    if form.validate_on_submit():
+        project = Project(title = form.title.data, description = form.description.data, start = form.start.data, end = form.end.data).save()
+        flash("Project is successfully created!","success")
+        return redirect(url_for('projects'))
+    return render_template("create_project.html", form=form, title="Create Project", create_project=True)
 
 @app.route("/components/<project_id>")
 def components(project_id=None):

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, IntegerField, PasswordField, SelectField, StringField, SubmitField, SelectMultipleField, widgets
+from wtforms import BooleanField, IntegerField, PasswordField, SelectField, StringField, SubmitField, SelectMultipleField, widgets, DateField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError, InputRequired
 from app.models import User, Project, Component, Assignee, Reporter, FixVersion, CC, Bug, Status, IssueType, Priority
 from flask import request
@@ -65,3 +65,12 @@ class SearchBugForm(FlaskForm):
         if 'csrf_enabled' not in kwargs:
             kwargs['csrf_enabled'] = False
         super(SearchBugForm, self).__init__(*args, **kwargs)
+
+
+class CreateProjectForm(FlaskForm):
+    # Project(project_id=1, title="BugTraq", description="Feature Tracking Application", start=datetime(2020,7,1), end=datetime(2020,10,1)).save()
+    title = StringField("Title", validators=[DataRequired(), Length(2, 50)])
+    description = StringField("Description", validators=[DataRequired(), Length(2, 80)])
+    start = DateField("Project Start Date", validators=[DataRequired()])
+    end = DateField("Project End Date", validators=[DataRequired()])
+    submit = SubmitField("Submit")

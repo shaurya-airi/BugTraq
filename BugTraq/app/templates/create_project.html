@@ -1,0 +1,17 @@
+{% include "bootstrap/base.html"%}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <h6>
+                <div class="row">
+                    <div class="col-md-4">
+                        {{ wtf.quick_form(form, ) }}
+                    </div>
+                </div>
+            </h6>
+        </div>
+    </div>
+
+{% endblock %}
