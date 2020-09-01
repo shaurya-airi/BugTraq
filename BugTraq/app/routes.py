@@ -1,7 +1,7 @@
 from app import app, db, add_data
 from flask import render_template, request, Response, json, flash, redirect, get_flashed_messages, url_for, session, jsonify
-from app.models import User, Project, Component, Assignee, Reporter, FixVersion, CC, Bug, Status, IssueType, Priority
-from app.forms import LoginForm, RegisterForm, CreateBugForm, SearchBugForm, CreateProjectForm, CreateComponentForm
+from app.models import Comment, User, Project, Component, Assignee, Reporter, FixVersion, CC, Bug, Status, IssueType, Priority
+from app.forms import LoginForm, RegisterForm, CreateBugForm, SearchBugForm, CreateProjectForm, CreateComponentForm, CommentForm
 from datetime import datetime
 from app.filters import *
 # from sqlalchemy import in_
@@ -129,7 +129,7 @@ def bugs(field=None):
         bugs = Bug.query.all()
     return render_template("bugs.html", bugs=bugs, Status=Status, title="All Bugs", all_bugs=True)
 
-@app.route("/show_bug/<bug_id>")
+@app.route("/show_bug/<bug_id>", methods=["POST", "GET"])
 def show_bugs(bug_id):
     if not bug_id:
         redirect(url_for('index'))
@@ -143,7 +143,16 @@ def show_bugs(bug_id):
     assignee = User.query.filter_by(user_id=bug.assignee_id).first()
     reporter = User.query.filter_by(user_id=bug.reporter_id).first()
     creator = User.query.filter_by(user_id=bug.creator_id).first()
-    return render_template("show_bugs.html", project=project, assignee=assignee, creator=creator, reporter=reporter, bug=bug, issue_type=issue_type, status=status, priority=priority,
+    form = CommentForm()
+    comments = Comment.query.all()
+    if form.validate_on_submit():
+        comment = Comment(body=form.body.data,
+                          bug_id=bug_id,
+                          user=User.query.filter_by(username=session.get('username')).first()).save()
+        flash('Your comment has been published.','success')
+        return redirect(url_for('show_bugs',bug_id=bug_id))
+    # return render_template("comments.html", form=form, title="", comments=comments)
+    return render_template("show_bugs.html", form=form, comments=comments, project=project, assignee=assignee, creator=creator, reporter=reporter, bug=bug, issue_type=issue_type, status=status, priority=priority,
         title="Bugs", User=User, bugs=True, today=today, components=components)
 
 @app.route("/create_bug", methods=["GET", "POST"])
@@ -243,4 +252,5 @@ def add():
     # return add_data.bug()
     # return add_data.component()
     # return add_data.components_to_bug(3)
+    # return add_data.comment()
     return 1

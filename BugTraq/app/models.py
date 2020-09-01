@@ -3,7 +3,8 @@ from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from app.search import add_to_index, remove_from_index, query_index
-
+from markdown import markdown
+import bleach
 
 class User(db.Model):
 
@@ -15,6 +16,7 @@ class User(db.Model):
     password =  db.Column(db.String(50), nullable=False)
     bugs = db.relationship('Bug', backref='user', lazy=True)
     ccs = db.relationship('CC', backref='user', lazy=True)
+    ccs = db.relationship('Comment', backref='user', lazy=True)
     assignees = db.relationship('Assignee', backref='user', uselist=False, lazy=True)
     reporters = db.relationship('Reporter', backref='user', uselist=False, lazy=True)
     def set_password(self, password):
@@ -174,6 +176,7 @@ class BugSearchableMixin(object):
 
 
 class Bug(BugSearchableMixin, db.Model):
+    #TODO: Add searching comments
     __searchable__ = ['bug_id', 'summary', 'description', 'version']
     bug_id = db.Column(db.Integer, primary_key=True)
     summary = db.Column(db.String(72), nullable=False)
@@ -190,6 +193,7 @@ class Bug(BugSearchableMixin, db.Model):
     creator_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     project_id = db.Column(db.Integer, db.ForeignKey('project.project_id'), nullable=False)
     ccs = db.relationship('CC', backref='bug', lazy=True)
+    comments = db.relationship('Comment', backref='bug', lazy='dynamic')
 
 
     def save(self):
@@ -210,7 +214,33 @@ class CC(db.Model):
         return '<User %r, Bug %r>' % (self.user_id, self.bug_id)
 
 
+class Comment(db.Model):
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    body_html = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    disabled = db.Column(db.Boolean)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
+    bug_id = db.Column(db.Integer, db.ForeignKey('bug.bug_id'))
 
+    @staticmethod
+    def on_changed_body(target, value, oldvalue, initiator):
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'code', 'em', 'i',
+                        'strong']
+        target.body_html = bleach.linkify(bleach.clean(
+            markdown(value, output_format='html'),
+            tags=allowed_tags, strip=True))
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return '<User %r, Bug %r, Comment %r>' % (self.user_id, self.bug_id, self.body)
+
+
+db.event.listen(Comment.body, 'set', Comment.on_changed_body)
 
 db.event.listen(db.session, 'before_commit', BugSearchableMixin.before_commit)
 db.event.listen(db.session, 'after_commit', BugSearchableMixin.after_commit)

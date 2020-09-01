@@ -3,6 +3,7 @@ from wtforms import BooleanField, IntegerField, PasswordField, SelectField, Stri
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError, InputRequired
 from app.models import User, Project, Component, Assignee, Reporter, FixVersion, CC, Bug, Status, IssueType, Priority
 from flask import request
+from sqlalchemy import desc
 
 class LoginForm(FlaskForm):
     #TODO: Login using username or email
@@ -79,3 +80,10 @@ class CreateProjectForm(FlaskForm):
 class CreateComponentForm(FlaskForm):
     name = StringField("Component", validators=[DataRequired(), Length(2, 50)])
     submit = SubmitField("Submit")
+
+
+class CommentForm(FlaskForm):
+    # bug_choices = [(item.bug_id, item.summary) for item in Bug.query.order_by(desc(Bug.updated_at)).all()]
+    body = StringField('', validators=[DataRequired()])
+    # bug = SelectField("Bug", choices=bug_choices, validate_choice=False)
+    submit = SubmitField('Submit')

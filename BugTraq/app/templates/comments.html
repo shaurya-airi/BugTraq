@@ -1,0 +1,10 @@
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+<h4 id="comments">Comments</h4>
+<div class="comment-form">
+    {{ wtf.quick_form(form) }}
+</div>
+{% include '_comments.html' %}
+
+{% endblock %}
