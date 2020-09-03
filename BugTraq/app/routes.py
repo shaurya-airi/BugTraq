@@ -144,14 +144,13 @@ def show_bugs(bug_id):
     reporter = User.query.filter_by(user_id=bug.reporter_id).first()
     creator = User.query.filter_by(user_id=bug.creator_id).first()
     form = CommentForm()
-    comments = Comment.query.all()
+    comments = Comment.query.filter_by(bug_id=bug_id).all()
     if form.validate_on_submit():
         comment = Comment(body=form.body.data,
                           bug_id=bug_id,
                           user=User.query.filter_by(username=session.get('username')).first()).save()
         flash('Your comment has been published.','success')
         return redirect(url_for('show_bugs',bug_id=bug_id))
-    # return render_template("comments.html", form=form, title="", comments=comments)
     return render_template("show_bugs.html", form=form, comments=comments, project=project, assignee=assignee, creator=creator, reporter=reporter, bug=bug, issue_type=issue_type, status=status, priority=priority,
         title="Bugs", User=User, bugs=True, today=today, components=components)
 
