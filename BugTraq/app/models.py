@@ -1,4 +1,5 @@
 import flask
+from hashlib import md5
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -28,6 +29,10 @@ class User(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+    def avatar(self,size):
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
 
     def __repr__(self):
         return '<User %r>' % self.username

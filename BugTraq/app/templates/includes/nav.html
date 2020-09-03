@@ -7,6 +7,7 @@
                 <li class="nav-item"><a href="{{ url_for('bugs') }}" class="nav-link {%if all_bugs%}active{% endif %}">Bugs</a></li>
                 <li class="nav-item"><a href="{{ url_for('search_bugs') }}" class="nav-link {%if search_bug%}active{% endif %}">Search Bug</a></li>
                 <li class="nav-item"><a href="{{ url_for('create_bugs') }}" class="nav-link {%if create_bug%}active{% endif %}">Create Bug</a></li>
+                <li class="nav-item"><a href="{{ url_for('user', username=session.get('username')) }}" class="nav-link {%if user_flag%}active{% endif %}">Profile</a></li>
                 {%endif%}
                 {%if not session['username']%}
                 <li class="nav-item"><a href="{{ url_for('register') }}" class="nav-link {%if register%}active{% endif %}">Register</a></li>

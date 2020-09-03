@@ -57,16 +57,14 @@ def register():
     return render_template("register.html", form=form, title="Register", register=True)
 
 @app.route("/user")
-@app.route("/users")
-def user():
-    # guest_user = User(user_id=1, username='airis', email='shauryaairi@bugtraq.com', first_name='Shaurya', last_name='Airi')
-    # guest_user.set_password('123456')
-    # guest_user.save()
-    # admin = User(user_id=2, username='admin', email='admin@buqtraq.com', first_name='admin', last_name="admin")
-    # admin.set_password('123456')
-    # admin.save()
-    users = User.query.all()
-    return render_template('user.html', users=users)
+@app.route("/user/<username>")
+def user(username=None):
+    user = User.query.filter_by(username=username).first_or_404()
+    users= None
+    if not username:
+        users = User.query.all()
+    bugs = Bug.query.filter_by(assignee_id=user.user_id).all()
+    return render_template('user.html', bugs=bugs, Status=Status, title="All Bugs", user=user, users=users, user_flag=True)
 
 @app.route("/projects")
 def projects():

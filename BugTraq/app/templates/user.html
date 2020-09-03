@@ -1,20 +1,30 @@
-{% extends 'layout.html' %}
 {% block content %}
 
-    <div class="row">
-        <div class="col-md-12 text-center">
-            {% for user in users %}
-            <dl>
-                <dt>User ID: {{ user.user_id }}</dt>
-                <dd>Username: {{ user.username }}</dd>
-                <dd>User: {{ user.first_name}} {{user.last_name }}</dd>
-                <dd>Email: {{user.email}}</dd>
-                <!-- <dd>Password: {{user.password}}</dd> -->
-            </dl>
-            {% else %}
-                <h3>No users yet.</h3>
-            {% endfor %}
+    {%if users%}
+        <div class="row">
+            <div class="col-md-12 text-center">
+                {% for user in users %}
+                <dl>
+                    <dt>User ID: {{ user.user_id }}</dt>
+                    <dd>{{ user.avatar(128) }}</dd>
+                    <dd>Username: {{ user.username }}</dd>
+                    <dd>User: {{ user.first_name}} {{user.last_name }}</dd>
+                    <dd>Email: {{user.email}}</dd>
+                </dl>
+                {% else %}
+                    <h3>No users yet.</h3>
+                {% endfor %}
+            </div>
         </div>
-    </div>
+    {% endif %}
+    {%if user%}
+        <table>
+            <tr valign="top">
+                <td><img src="{{ user.avatar(128) }}"></td>
+                <td><h1>User: {{ user.username }}</h1></td>
+            </tr>
+        </table>
+        {% include 'bugs.html'%}
+    {% endif %}
 
 {% endblock %}
