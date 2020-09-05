@@ -15,7 +15,7 @@ class User(db.Model):
     last_name =  db.Column(db.String(80), nullable=False)
     email =  db.Column(db.String(100), unique=True, nullable=False)
     password =  db.Column(db.String(50), nullable=False)
-    bugs = db.relationship('Bug', backref='user', lazy=True)
+    bugs = db.relationship('Bug', backref='creator', lazy=True)
     ccs = db.relationship('CC', backref='user', lazy=True)
     commments = db.relationship('Comment', backref='user', lazy=True)
     assignees = db.relationship('Assignee', backref='user', uselist=False, lazy=True)

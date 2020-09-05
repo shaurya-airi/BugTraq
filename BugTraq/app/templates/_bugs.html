@@ -18,7 +18,7 @@
             <td>{{bug["summary"]}}</td>
             <td>{{bug.created_at.strftime('%d/%m/%Y')}}</td>
             <td>{{bug.updated_at.strftime('%d/%m/%Y')}}</td>
-            <td>{{Status.query.filter_by(status_id=bug.status_id).first().status}}</td>
+            <td>{{bug.status.status}}</td>
 
         </tr>
         {% endfor %}

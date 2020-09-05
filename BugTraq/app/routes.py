@@ -66,7 +66,8 @@ def user(username=None):
     users= None
     if not username:
         users = User.query.all()
-    bugs = Bug.query.filter_by(assignee_id=user.user_id).all()
+    # bugs = Bug.query.filter_by(assignee_id=user.user_id).all()
+    bugs = user.assignees.bugs
     return render_template('user.html', bugs=bugs, Status=Status, title="All Bugs", user=user, users=users, user_flag=True)
 
 @app.route("/projects")
@@ -93,8 +94,8 @@ def components(project_id=None):
         return redirect(url_for('index'))
     if not project_id:
         redirect(url_for('/projects'))
-    all_components = Component.query.filter_by(project_id=project_id)
-    project = Project.query.filter_by(project_id=project_id).first_or_404()
+    project = Project.query.get_or_404(project_id)
+    all_components = project.components
     return render_template("components.html", title="Components",all_components=all_components, project=project, components_flag=True)
 
 @app.route("/create_component/<project_id>", methods=['GET','POST'])
@@ -137,18 +138,18 @@ def show_bugs(bug_id):
         return redirect(url_for('index'))
     if not bug_id:
         redirect(url_for('index'))
-    bug = Bug.query.filter_by(bug_id=bug_id).first_or_404()
-    issue_type = IssueType.query.filter_by(issue_type_id=bug.issue_type_id).first().issue_type
-    status = Status.query.filter_by(status_id=bug.status_id).first().status
-    priority = Priority.query.filter_by(pid=bug.pid).first().priority
+    bug = Bug.query.get_or_404(bug_id)
+    issue_type = bug.issue_type.issue_type
+    status = bug.status.status
+    priority = bug.priority.priority
     today = datetime.utcnow()
-    project = Project.query.filter_by(project_id=bug.project_id).first()
+    project = bug.project
     components = bug.component
-    assignee = User.query.filter_by(user_id=bug.assignee_id).first()
-    reporter = User.query.filter_by(user_id=bug.reporter_id).first()
-    creator = User.query.filter_by(user_id=bug.creator_id).first()
+    assignee = bug.assignee.user
+    reporter = bug.reporter.user
+    creator = bug.creator
     form = CommentForm()
-    comments = Comment.query.filter_by(bug_id=bug_id).all()
+    comments = bug.comments
     if form.validate_on_submit():
         comment = Comment(body=form.body.data,
                           bug_id=bug_id,
