@@ -69,7 +69,6 @@ class SearchBugForm(FlaskForm):
 
 
 class CreateProjectForm(FlaskForm):
-    # Project(project_id=1, title="BugTraq", description="Feature Tracking Application", start=datetime(2020,7,1), end=datetime(2020,10,1)).save()
     title = StringField("Title", validators=[DataRequired(), Length(2, 50)])
     description = StringField("Description", validators=[DataRequired(), Length(2, 80)])
     start = DateField("Project Start Date", validators=[DataRequired()])
@@ -83,7 +82,5 @@ class CreateComponentForm(FlaskForm):
 
 
 class CommentForm(FlaskForm):
-    # bug_choices = [(item.bug_id, item.summary) for item in Bug.query.order_by(desc(Bug.updated_at)).all()]
     body = StringField('', validators=[DataRequired()])
-    # bug = SelectField("Bug", choices=bug_choices, validate_choice=False)
     submit = SubmitField('Submit')

@@ -232,7 +232,6 @@ def search_bugs():
         # TODO: Either add search and filtering to bugs page or add bugs pages extension to search_bugs
         for field in FILTER_FIELDS:
             if request.form.get(field):
-                print(field)
                 return redirect(url_for('bugs',field=field))
 
     return render_template("search_bug.html", form=form, title="Search Bugs",  Status=Status, fields=FILTER_FIELDS, search_bug=True)
