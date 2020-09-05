@@ -94,7 +94,7 @@ def components(project_id=None):
     if not project_id:
         redirect(url_for('/projects'))
     all_components = Component.query.filter_by(project_id=project_id)
-    project = Project.query.filter_by(project_id=project_id).first()
+    project = Project.query.filter_by(project_id=project_id).first_or_404()
     return render_template("components.html", title="Components",all_components=all_components, project=project, components_flag=True)
 
 @app.route("/create_component/<project_id>", methods=['GET','POST'])
@@ -137,7 +137,7 @@ def show_bugs(bug_id):
         return redirect(url_for('index'))
     if not bug_id:
         redirect(url_for('index'))
-    bug = Bug.query.filter_by(bug_id=bug_id).first()
+    bug = Bug.query.filter_by(bug_id=bug_id).first_or_404()
     issue_type = IssueType.query.filter_by(issue_type_id=bug.issue_type_id).first().issue_type
     status = Status.query.filter_by(status_id=bug.status_id).first().status
     priority = Priority.query.filter_by(pid=bug.pid).first().priority

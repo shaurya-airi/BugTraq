@@ -11,7 +11,7 @@
             <span style="padding-left:6px">Created at: {{bug.created_at.strftime('%d/%m/%Y')}}</span>
             <span style="padding-left:6px">Updated at: {{bug.updated_at.strftime('%d/%m/%Y')}}</span>
             <span style='float:right;'>
-                <a href="{{url_for('edit_bugs', bug_id=bug.bug_id, _method='POST')}}" class="btn btn-primary active" role="button" aria-pressed="true">Edit</a>
+                <a href="{{url_for('edit_bugs', bug_id=bug.bug_id, _method='POST')}}" class="btn btn-primary" role="button" aria-pressed="true">Edit</a>
             </span>
         </h6>
         <h5 class="card-title"><strong>{{bug["summary"]}}</strong></h5>
@@ -120,11 +120,12 @@
     </div>
 </div>
 <!-- </div> -->
-
-<h4 id="comments">Comments</h4>
-<div class="comment-form">
-    {{ wtf.quick_form(form) }}
+<br>
+<h5 id="comments">Comments</h5>
+<div class="card" id="add_comment">
+    <div class="comment-form">
+        {{ wtf.quick_form(form) }}
+    </div>
+    {% include '_comments.html' %}
 </div>
-{% include '_comments.html' %}
-
 {% endblock %}

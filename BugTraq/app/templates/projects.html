@@ -36,8 +36,8 @@
                 <td scope='row'>{{project["project_id"]}}</td>
                 <td>{{project["title"]}}</td>
                 <td>{{project["description"]}}</td>
-                <td>{{project["start"]}}</td>
-                <td>{{project["end"]}}</td>
+                <td>{{project["start"].strftime('%d/%m/%Y')}}</td>
+                <td>{{project["end"].strftime('%d/%m/%Y')}}</td>
                 <td><a href="{{url_for('components', project_id=project.project_id, _method='POST')}}" class="btn btn-primary" role="button" aria-pressed="true">{{project["title"]}}</a></td>
 
             </tr>

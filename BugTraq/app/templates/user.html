@@ -1,3 +1,4 @@
+{% extends 'layout.html' %}
 {% block content %}
 
     {%if users%}
@@ -24,7 +25,8 @@
                 <td><h1>User: {{ user.username }}</h1></td>
             </tr>
         </table>
-        {% include 'bugs.html'%}
+        <h3>{{"Your Bugs"}}</h3>
+        {% include '_bugs.html'%}
     {% endif %}
 
 {% endblock %}

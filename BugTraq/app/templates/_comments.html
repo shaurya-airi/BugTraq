@@ -1,6 +1,6 @@
 <ul class="comments">
     {% for comment in comments %}
-        <li class="comment">
+        <li class="card">
             <div class="comment-thumbnail">
                 <a href="{{ url_for('user', username=comment.user.username) }}">
                     <img class="img-rounded profile-thumbnail" src="{{ comment.user.avatar(size=36) }}">
