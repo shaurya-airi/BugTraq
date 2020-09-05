@@ -11,7 +11,7 @@ bug_list = []
 @app.route("/index")
 @app.route("/home")
 def index():
-    return render_template("index.html", index=True)
+    return render_template("index.html", index_flag=True)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -25,16 +25,18 @@ def login():
         if user and user.get_password(password):
             session['user_id'] = user.user_id
             session['username'] = user.username
-            flash("You are successfully logged in!","success")
+            session['first_name'] = user.first_name
+            flash(f"Welcome, {session['first_name']}!","success")
             return redirect("/index")
         else:
-            flash("Sorry, something went wrong!","danger")
-    return render_template("login.html", title="Login", form=form, login=True)
+            flash("Username or password is wrong. Please check and try again.","danger")
+    return render_template("login.html", title="Login", form=form, login_flag=True)
 
 @app.route("/logout")
 def logout():
     session['user_id']=False
     session['username']=False
+    flash('You have been logged out.','warning')
     return redirect(url_for('index'))
 
 @app.route("/register", methods=["GET", "POST"])
@@ -53,11 +55,13 @@ def register():
         user.save()
         flash("You are successfully registered!","success")
         return redirect(url_for('index'))
-    return render_template("register.html", form=form, title="Register", register=True)
+    return render_template("register.html", form=form, title="Register", register_flag=True)
 
 @app.route("/user")
 @app.route("/user/<username>")
 def user(username=None):
+    if not session.get('username'):
+        return redirect(url_for('index'))
     user = User.query.filter_by(username=username).first_or_404()
     users= None
     if not username:
@@ -70,7 +74,7 @@ def projects():
     if not session.get('username'):
         return redirect(url_for('index'))
     all_projects = Project.query.all()
-    return render_template("projects.html", title="Projects", all_projects=all_projects, projects=True)
+    return render_template("projects.html", title="Projects", all_projects=all_projects, projects_flag=True)
 
 @app.route("/create_project", methods=['GET','POST'])
 def create_project():
@@ -81,7 +85,7 @@ def create_project():
         project = Project(title = form.title.data, description = form.description.data, start = form.start.data, end = form.end.data).save()
         flash("Project is successfully created!","success")
         return redirect(url_for('projects'))
-    return render_template("create_project.html", form=form, title="Create Project", create_project=True)
+    return render_template("create_project.html", form=form, title="Create Project", create_project_flag=True)
 
 @app.route("/components/<project_id>", methods=['GET','POST'])
 def components(project_id=None):
@@ -91,7 +95,7 @@ def components(project_id=None):
         redirect(url_for('/projects'))
     all_components = Component.query.filter_by(project_id=project_id)
     project = Project.query.filter_by(project_id=project_id).first()
-    return render_template("components.html", title="Components",all_components=all_components, project=project, components=True)
+    return render_template("components.html", title="Components",all_components=all_components, project=project, components_flag=True)
 
 @app.route("/create_component/<project_id>", methods=['GET','POST'])
 def create_component(project_id=None):
@@ -102,10 +106,12 @@ def create_component(project_id=None):
         component = Component(name = form.name.data, project_id = project_id).save()
         flash("Component is successfully created!","success")
         return redirect(url_for('components', project_id=project_id))
-    return render_template("create_component.html", form=form, title="Create Component", create_component=True)
+    return render_template("create_component.html", form=form, title="Create Component", create_component_flag=True)
 
 @app.route('/get_component/<project_id>')
 def get_component(project_id):
+    if not session.get('username'):
+        return redirect(url_for('index'))
     components = [{'component_id':row.component_id, 'name':row.name} for row in Component.query.filter_by(project_id=project_id).all()]
     return jsonify(components)
 
@@ -123,10 +129,12 @@ def bugs(field=None):
         bugs = bug_list
     else:
         bugs = Bug.query.all()
-    return render_template("bugs.html", bugs=bugs, Status=Status, title="All Bugs", all_bugs=True)
+    return render_template("bugs.html", bugs=bugs, Status=Status, title="All Bugs", bugs_flag=True)
 
 @app.route("/show_bug/<bug_id>", methods=["POST", "GET"])
 def show_bugs(bug_id):
+    if not session.get('username'):
+        return redirect(url_for('index'))
     if not bug_id:
         redirect(url_for('index'))
     bug = Bug.query.filter_by(bug_id=bug_id).first()
@@ -148,10 +156,12 @@ def show_bugs(bug_id):
         flash('Your comment has been published.','success')
         return redirect(url_for('show_bugs',bug_id=bug_id))
     return render_template("show_bugs.html", form=form, comments=comments, project=project, assignee=assignee, creator=creator, reporter=reporter, bug=bug, issue_type=issue_type, status=status, priority=priority,
-        title="Bugs", User=User, bugs=True, today=today, components=components)
+        title="Bugs", User=User, bugs=True, today=today, components=components, show_bugs_flag=True)
 
 @app.route("/create_bug", methods=["GET", "POST"])
 def create_bugs():
+    if not session.get('username'):
+        return redirect(url_for('index'))
     form = CreateBugForm()
     if form.validate_on_submit():
         summary = form.summary.data
@@ -174,10 +184,12 @@ def create_bugs():
         bug.save()
         flash("Bug is successfully created!","success")
         return redirect(url_for('bugs'))
-    return render_template("create_bug.html", form=form, title="Create Bug", create_bug=True)
+    return render_template("create_bug.html", form=form, title="Create Bug", create_bug_flag=True)
 
 @app.route("/edit_bug/<bug_id>", methods=["GET", "POST"])
 def edit_bugs(bug_id):
+    if not session.get('username'):
+        return redirect(url_for('index'))
     bug = Bug.query.get_or_404(bug_id)
     form = CreateBugForm(obj=bug)
     # Got components selected
@@ -215,10 +227,12 @@ def edit_bugs(bug_id):
         db.session.commit()
         flash('The Bug has been Updated Successfully!','success')
         return redirect(url_for('bugs'))
-    return render_template("edit_bug.html", form=form, title="Edit Bug", edit_bug=True)
+    return render_template("edit_bug.html", form=form, title="Edit Bug", edit_bug_flag=True)
 
 @app.route("/search_bug", methods=["GET", "POST"])
 def search_bugs():
+    if not session.get('username'):
+        return redirect(url_for('index'))
     form = SearchBugForm()
     if request.method == 'POST':
         # TODO: Check logic for form.validateon search_input
@@ -234,10 +248,12 @@ def search_bugs():
             if request.form.get(field):
                 return redirect(url_for('bugs',field=field))
 
-    return render_template("search_bug.html", form=form, title="Search Bugs",  Status=Status, fields=FILTER_FIELDS, search_bug=True)
+    return render_template("search_bug.html", form=form, title="Search Bugs",  Status=Status, fields=FILTER_FIELDS, search_bugs_flag=True)
 
 @app.route("/data")
 def add():
+    if not session.get('username'):
+        return redirect(url_for('index'))
 
     # return add_data.priority()
     # return add_data.status()
