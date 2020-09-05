@@ -18,7 +18,7 @@ class RegisterForm(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired(), Length(6,50)])
     password_confirm = PasswordField("Confirm Password", validators=[DataRequired(), Length(6,50), EqualTo('password')])
     first_name = StringField("First Name", validators=[DataRequired(), Length(2,80)])
-    last_name = StringField("Last Name", validators=[DataRequired(), Length(2, 80)])
+    last_name = StringField("Last Name", validators=[Length(0, 80)])
     submit = SubmitField("Register Now")
 
     def validate_email(self, email):
@@ -43,7 +43,7 @@ class CreateBugForm(FlaskForm):
     component_choices = [(item.component_id, item.name ) for item in Component.query.order_by('name')]
 
     summary = StringField("Summary", validators=[DataRequired(), Length(1, 72)])
-    description = StringField("Description", validators=[DataRequired(), Length(1,256)])
+    description = StringField("Description", validators=[Length(0,256)])
     status = SelectField("Status", choices=status_choices, validate_choice=False)
     issue_type = SelectField("Issue Type", choices=issue_type_choices, validate_choice=False)
     priority = SelectField("Priority", choices=priority_choices, validate_choice=False)

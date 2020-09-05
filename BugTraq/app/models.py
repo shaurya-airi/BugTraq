@@ -17,7 +17,7 @@ class User(db.Model):
     password =  db.Column(db.String(50), nullable=False)
     bugs = db.relationship('Bug', backref='user', lazy=True)
     ccs = db.relationship('CC', backref='user', lazy=True)
-    ccs = db.relationship('Comment', backref='user', lazy=True)
+    commments = db.relationship('Comment', backref='user', lazy=True)
     assignees = db.relationship('Assignee', backref='user', uselist=False, lazy=True)
     reporters = db.relationship('Reporter', backref='user', uselist=False, lazy=True)
     def set_password(self, password):

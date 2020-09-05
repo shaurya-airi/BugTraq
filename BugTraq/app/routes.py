@@ -4,7 +4,7 @@ from app.models import Comment, User, Project, Component, Assignee, Reporter, Fi
 from app.forms import LoginForm, RegisterForm, CreateBugForm, SearchBugForm, CreateProjectForm, CreateComponentForm, CommentForm
 from datetime import datetime
 from app.filters import *
-# from sqlalchemy import in_
+
 bug_list = []
 
 @app.route("/")
@@ -43,7 +43,6 @@ def register():
         return redirect(url_for('index'))
     form = RegisterForm()
     if form.validate_on_submit():
-        # user_id = len(User.query.all()) +1 : Not required as next user_id is created as it is PK in SQL
         username = form.username.data
         email = form.email.data
         password = form.password.data
@@ -68,7 +67,6 @@ def user(username=None):
 
 @app.route("/projects")
 def projects():
-    # TODO: Clickable projects to open components pages
     if not session.get('username'):
         return redirect(url_for('index'))
     all_projects = Project.query.all()
@@ -103,7 +101,7 @@ def create_component(project_id=None):
     if form.validate_on_submit():
         component = Component(name = form.name.data, project_id = project_id).save()
         flash("Component is successfully created!","success")
-        return redirect(url_for('components', project_id=project_id)) #TODO: Check
+        return redirect(url_for('components', project_id=project_id))
     return render_template("create_component.html", form=form, title="Create Component", create_component=True)
 
 @app.route('/get_component/<project_id>')

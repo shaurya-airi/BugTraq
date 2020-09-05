@@ -18,7 +18,6 @@
             </thead>
             <tbody>
 
-            <!-- TODO: Add url for function which requires show_bug/id/<bug_id> -->
             {% for bug in bugs %}
             {% set show_bug_url = url_for('show_bugs', bug_id=bug.bug_id) %}
             <tr onclick="window.location='{{show_bug_url}}';">
