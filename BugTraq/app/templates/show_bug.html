@@ -11,7 +11,7 @@
             <span style="padding-left:6px">Created at: {{bug.created_at.strftime('%d/%m/%Y')}}</span>
             <span style="padding-left:6px">Updated at: {{bug.updated_at.strftime('%d/%m/%Y')}}</span>
             <span style='float:right;'>
-                <a href="{{url_for('edit_bugs', bug_id=bug.bug_id, _method='POST')}}" class="btn btn-primary" role="button" aria-pressed="true">Edit</a>
+                <a href="{{url_for('edit_bug', bug_id=bug.bug_id, _method='POST')}}" class="btn btn-primary" role="button" aria-pressed="true">Edit</a>
             </span>
         </h6>
         <h5 class="card-title"><strong>{{bug["summary"]}}</strong></h5>

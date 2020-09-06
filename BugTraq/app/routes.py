@@ -68,7 +68,7 @@ def register():
                            register_flag=True)
 
 
-@app.route("/user")
+@app.route("/users")
 @app.route("/user/<username>")
 def user(username=None):
     if not session.get('username'):
@@ -142,8 +142,8 @@ def get_component(project_id):
     return jsonify(components)
 
 
-@app.route("/bug")
-@app.route("/bug/<field>", methods=["POST", "GET"])
+@app.route("/bugs")
+@app.route("/bugs/<field>", methods=["POST", "GET"])
 def bugs(field=None):
     if not session.get('username'):
         return redirect(url_for('index'))
@@ -162,7 +162,7 @@ def bugs(field=None):
 
 
 @app.route("/show_bug/<bug_id>", methods=["POST", "GET"])
-def show_bugs(bug_id):
+def show_bug(bug_id):
     if not session.get('username'):
         return redirect(url_for('index'))
     if not bug_id:
@@ -185,8 +185,8 @@ def show_bugs(bug_id):
                 user=User.query.
                 filter_by(username=session.get('username')).first()).save()
         flash('Your comment has been published.', 'success')
-        return redirect(url_for('show_bugs', bug_id=bug_id))
-    return render_template("show_bugs.html", form=form, comments=comments,
+        return redirect(url_for('show_bug', bug_id=bug_id))
+    return render_template("show_bug.html", form=form, comments=comments,
                            project=project, assignee=assignee, creator=creator,
                            reporter=reporter, bug=bug, issue_type=issue_type,
                            status=status, priority=priority, title="Bugs",
@@ -195,7 +195,7 @@ def show_bugs(bug_id):
 
 
 @app.route("/create_bug", methods=["GET", "POST"])
-def create_bugs():
+def create_bug():
     if not session.get('username'):
         return redirect(url_for('index'))
     form = CreateBugForm()
@@ -227,7 +227,7 @@ def create_bugs():
 
 
 @app.route("/edit_bug/<bug_id>", methods=["GET", "POST"])
-def edit_bugs(bug_id):
+def edit_bug(bug_id):
     if not session.get('username'):
         return redirect(url_for('index'))
     bug = Bug.query.get_or_404(bug_id)
@@ -271,7 +271,7 @@ def edit_bugs(bug_id):
                            edit_bug_flag=True)
 
 
-@app.route("/search_bug", methods=["GET", "POST"])
+@app.route("/search_bugs", methods=["GET", "POST"])
 def search_bugs():
     if not session.get('username'):
         return redirect(url_for('index'))
@@ -291,7 +291,7 @@ def search_bugs():
             if request.form.get(field):
                 return redirect(url_for('bugs', field=field))
 
-    return render_template("search_bug.html", form=form, title="Search Bugs",
+    return render_template("search_bugs.html", form=form, title="Search Bugs",
                            Status=Status, fields=FILTER_FIELDS,
                            search_bugs_flag=True)
 
