@@ -71,6 +71,7 @@ class Component(db.Model):
     name = db.Column(db.String(50), unique=True, nullable=False)
     project_id = db.Column(db.Integer, db.ForeignKey('project.project_id'),
                            nullable=False)
+    # TODO: Rename component_relation to bugs for much better clarity
     component_relation = db.relationship('Bug', secondary=component_relation,
                                          lazy='subquery',
                                          backref=db.backref('component',

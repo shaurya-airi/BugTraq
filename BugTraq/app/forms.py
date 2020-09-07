@@ -5,7 +5,7 @@ from wtforms import (
 from wtforms.validators import (
     DataRequired, Email, EqualTo, Length, ValidationError)
 from app.models import (
-    User, Project, Component, Assignee, Reporter, Status, IssueType, Priority)
+    User, Project, Assignee, Reporter, Status, IssueType, Priority)
 from flask import request
 
 
@@ -53,6 +53,7 @@ class CreateBugForm(FlaskForm):
                           IssueType.query.order_by('issue_type_id')]
     priority_choices = [(item.pid, item.priority) for item in
                         Priority.query.order_by('pid')]
+    # TODO: Use backrefs
     reporter_choices = [(item.user_id,
                         User.query.filter_by(user_id=item.user_id).
                         first().username) for item in
@@ -63,9 +64,6 @@ class CreateBugForm(FlaskForm):
                         Assignee.query.order_by('user_id')]
     project_choices = [(item.project_id, item.title) for item in
                        Project.query.order_by('project_id')]
-    component_choices = [(item.component_id, item.name) for item in
-                         Component.query.order_by('name')]
-
     summary = StringField(
         "Summary", validators=[DataRequired(), Length(1, 72)])
     description = StringField("Description", validators=[Length(0, 256)])
@@ -86,7 +84,7 @@ class CreateBugForm(FlaskForm):
         validate_choice=False)
     component = SelectMultipleField(
         "Component", option_widget=widgets.CheckboxInput(),
-        id='select_component', coerce=int, choices=component_choices)
+        id='select_component', coerce=int)
     # CC = SelectMultipleField("CC",validators=[DataRequired(), Length(2, 50)])
     submit = SubmitField("Submit")
 

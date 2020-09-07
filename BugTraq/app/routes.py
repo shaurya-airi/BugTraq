@@ -199,6 +199,9 @@ def create_bug():
     if not session.get('username'):
         return redirect(url_for('index'))
     form = CreateBugForm()
+    first_project = Project.query.order_by('project_id').first()
+    form.component.choices = [(item.component_id, item.name) for item in
+                              first_project.components]
     if form.validate_on_submit():
         summary = form.summary.data
         description = form.description.data
@@ -233,7 +236,8 @@ def edit_bug(bug_id):
     bug = Bug.query.get_or_404(bug_id)
     form = CreateBugForm(obj=bug)
     # Got components selected
-
+    form.component.choices = [(item.component_id, item.name) for item in
+                              bug.project.components]
     if request.method == 'GET':
         form.status.default = bug.status_id
         form.issue_type.default = bug.issue_type_id
@@ -260,6 +264,7 @@ def edit_bug(bug_id):
         bug.assignee_id = form.assignee.data
         bug.creator_id = session.get('user_id')
         bug.project_id = form.project.data
+        bug.component.clear()
         for component_id in components:
             component = Component.query.get(component_id)
             bug.component.append(component)
