@@ -1,11 +1,11 @@
 from flask_wtf import FlaskForm
 from wtforms import (
-    BooleanField, PasswordField, SelectField, StringField,
+    IntegerField, BooleanField, PasswordField, SelectField, StringField,
     SubmitField, SelectMultipleField, widgets, DateField)
 from wtforms.validators import (
     DataRequired, Email, EqualTo, Length, ValidationError)
 from app.models import (
-    User, Project, Assignee, Reporter, Status, IssueType, Priority)
+    User, Project, Assignee, Reporter, Component, Status, IssueType, Priority)
 from flask import request
 
 
@@ -114,7 +114,20 @@ class CreateProjectForm(FlaskForm):
 
 class CreateComponentForm(FlaskForm):
     name = StringField("Component", validators=[DataRequired(), Length(2, 50)])
-    submit = SubmitField("Submit")
+    project_id = IntegerField("Project Id")
+    submit = SubmitField('Submit')
+
+    def validate(self):
+        rv = FlaskForm.validate(self)
+        if not rv:
+            return False
+        component = Component.query.filter_by(
+            name=self.name.data, project_id=self.project_id.data).first()
+        if component:
+            self.name.errors.append(
+                "Component is already present for the project.")
+            return False
+        return True
 
 
 class CommentForm(FlaskForm):

@@ -124,8 +124,9 @@ def create_component(project_id=None):
     if not session.get('username'):
         return redirect(url_for('index'))
     form = CreateComponentForm()
+    form.project_id.data = project_id
     if form.validate_on_submit():
-        Component(name=form.name.data, project_id=project_id).save()
+        Component(name=form.name.data, project_id=form.project_id.data).save()
         flash("Component is successfully created!", "success")
         return redirect(url_for('components', project_id=project_id))
     return render_template("create_component.html", form=form,
