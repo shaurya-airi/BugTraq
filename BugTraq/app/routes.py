@@ -202,6 +202,10 @@ def create_bug():
     first_project = Project.query.order_by('project_id').first()
     form.component.choices = [(item.component_id, item.name) for item in
                               first_project.components]
+    if request.method == 'POST':
+        form.component.choices = [(item.component_id, item.name) for item in
+                                  Component.query.filter_by(
+                                      project_id=form.project.data)]
     if form.validate_on_submit():
         summary = form.summary.data
         description = form.description.data
@@ -252,7 +256,11 @@ def edit_bug(bug_id):
         form.version.data = bug.version
         form.component.data = [c.component_id for c in bug.component]
 
-    if request.method == 'POST' and form.validate():
+    if request.method == 'POST':
+        form.component.choices = [(item.component_id, item.name) for item in
+                                  Component.query.filter_by(
+                                      project_id=form.project.data)]
+    if form.validate_on_submit():
         components = form.component.data
         bug.summary = form.summary.data
         bug.description = form.description.data

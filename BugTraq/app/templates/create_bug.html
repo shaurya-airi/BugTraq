@@ -40,7 +40,7 @@
                 response.json().then(function(data){
                     let optionHTML = '';
                     for (let component of data) {
-                        optionHTML += '<option value="' + component.id + '">' + component.name + '</option>';
+                        optionHTML += '<option value="' + component.component_id + '">' + component.name + '</option>';
                     }
                     component_select.innerHTML = optionHTML;
                 })
