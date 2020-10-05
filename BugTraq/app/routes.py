@@ -73,11 +73,13 @@ def register():
 def user(username=None):
     if not session.get('username'):
         return redirect(url_for('index'))
-    user = User.query.filter_by(username=username).first_or_404()
+    user = User.query.filter_by(username=username).first()
     users = None
+    bugs = None
     if not username:
         users = User.query.all()
-    bugs = user.assignees.bugs
+    if user:
+        bugs = user.assignees.bugs
     return render_template('user.html', bugs=bugs, Status=Status,
                            title="All Bugs", user=user, users=users,
                            user_flag=True)
