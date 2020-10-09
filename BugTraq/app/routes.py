@@ -3,7 +3,8 @@ from flask import (render_template, request, flash, redirect, url_for, session,
                    jsonify)
 from app.models import (Comment, User, Project, Component, Bug, Status)
 from app.forms import (LoginForm, RegisterForm, CreateBugForm, SearchBugForm,
-                       CreateProjectForm, CreateComponentForm, CommentForm)
+                       CreateProjectForm, CreateComponentForm, CommentForm,
+                       DeleteBugForm)
 from datetime import datetime
 from app.filters import (FILTER_FIELDS, FILTER_DICT)
 
@@ -181,6 +182,7 @@ def show_bug(bug_id):
     reporter = bug.reporter.user
     creator = bug.creator
     form = CommentForm()
+    delete_form = DeleteBugForm()
     comments = bug.comments
     if form.validate_on_submit():
         Comment(body=form.body.data,
@@ -189,12 +191,16 @@ def show_bug(bug_id):
                 filter_by(username=session.get('username')).first()).save()
         flash('Your comment has been published.', 'success')
         return redirect(url_for('show_bug', bug_id=bug_id))
+    if delete_form.is_submitted():
+        delete_bug(delete_form, bug)
+        return redirect(url_for("bugs"))
     return render_template("show_bug.html", form=form, comments=comments,
                            project=project, assignee=assignee, creator=creator,
                            reporter=reporter, bug=bug, issue_type=issue_type,
                            status=status, priority=priority, title="Bugs",
                            User=User, bugs=True, today=today,
-                           components=components, show_bugs_flag=True)
+                           components=components, show_bugs_flag=True,
+                           delete_form=delete_form)
 
 
 @app.route("/create_bug", methods=["GET", "POST"])
@@ -231,7 +237,7 @@ def create_bug():
             bug.component.append(component)
         bug.save()
         flash("Bug is successfully created!", "success")
-        return redirect(url_for('bugs'))
+        return redirect(url_for('show_bug', bug_id=bug.bug_id))
     return render_template("create_bug.html", form=form, title="Create Bug",
                            create_bug_flag=True)
 
@@ -310,6 +316,27 @@ def search_bugs():
     return render_template("search_bugs.html", form=form, title="Search Bugs",
                            Status=Status, fields=FILTER_FIELDS,
                            search_bugs_flag=True)
+
+
+def delete_bug(delete_form: DeleteBugForm, bug):
+    app.logger.info(f"Delete the comments of the bug {bug.bug_id}")
+    bug_id = bug.bug_id
+    for comment in bug.comments:
+        app.logger.info(f"Deleting Comment {comment.id}")
+        db.session.delete(comment)
+    app.logger.info(f"Deleting Bug {bug.bug_id}")
+    db.session.delete(bug)
+    db.session.commit()
+    flash(f'Bug {bug_id} is deleted.', 'success')
+
+
+@app.route("/test/")
+@app.route("/tests")
+@app.route("/test/<bug_id>", methods=["POST", "GET"])
+def test(bug_id=None):
+    bug = Bug.query.get(bug_id)
+    delete_form = DeleteBugForm()
+    return render_template("test_ui.html", bug=bug, delete_form=delete_form)
 
 
 @app.route("/data")

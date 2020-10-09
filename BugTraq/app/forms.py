@@ -115,7 +115,7 @@ class CreateProjectForm(FlaskForm):
 class CreateComponentForm(FlaskForm):
     name = StringField("Component", validators=[DataRequired(), Length(2, 50)])
     project_id = IntegerField("Project Id")
-    submit = SubmitField('Submit')
+    submit = SubmitField("Submit")
 
     def validate(self):
         rv = FlaskForm.validate(self)
@@ -130,6 +130,10 @@ class CreateComponentForm(FlaskForm):
         return True
 
 
+class DeleteBugForm(FlaskForm):
+    delete = SubmitField("Yes")
+
+
 class CommentForm(FlaskForm):
     body = StringField('', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    submit = SubmitField("Submit")

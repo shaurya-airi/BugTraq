@@ -10,8 +10,36 @@
             <span style="padding-left:6px">Bug {{bug["bug_id"]}}</span>
             <span style="padding-left:6px">Created at: {{bug.created_at.strftime('%d/%m/%Y')}}</span>
             <span style="padding-left:6px">Updated at: {{bug.updated_at.strftime('%d/%m/%Y')}}</span>
-            <span style='float:right;'>
-                <a href="{{url_for('edit_bug', bug_id=bug.bug_id, _method='POST')}}" class="btn btn-primary" role="button" aria-pressed="true">Edit</a>
+            <!-- TODO: Delete can be part of dropdown menu once more options are added -->
+            <span style="float: right">
+                <a href="{{url_for('edit_bug', bug_id=bug.bug_id, _method='POST')}}" class="btn btn-primary" style="display:inline-block" role="button" aria-pressed="true">Edit</a>
+                <!-- Button trigger -->
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#confirmDeleteModal">Delete</button>
+                <!-- Modal -->
+                <div class="modal fade" id="confirmDeleteModal" data-keyboard="false" data-backdrop="static" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="confirmDeleteModalTitleLabel">Bug {{bug.bug_id}} will be permanently deleted. Are you sure?</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-success cancelDeleteButton" style="display:inline-block" data-dismiss="modal">No</button>
+                                        </div>
+                                        <div class="col-md-2">
+                                            {{wtf.quick_form(delete_form, button_map={'delete': 'danger'})}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </span>
         </h6>
         <h5 class="card-title"><strong>{{bug["summary"]}}</strong></h5>
@@ -128,4 +156,5 @@
     </div>
     {% include '_comments.html' %}
 </div>
+
 {% endblock %}
