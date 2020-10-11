@@ -191,7 +191,16 @@ def show_bug(bug_id):
                 filter_by(username=session.get('username')).first()).save()
         flash('Your comment has been published.', 'success')
         return redirect(url_for('show_bug', bug_id=bug_id))
-    if delete_form.is_submitted():
+    if request.method == 'POST' and request.form.get('delete_comment'):
+        comment_id = int(request.form.get('delete_comment'))
+        app.logger.info(f"Deleting Comment {comment_id}")
+        comment = Comment.query.get(comment_id)
+        if comment:
+            db.session.delete(comment)
+            app.logger.info(f"Comment {comment_id} Deleted.")
+            flash(f"Comment {comment_id} has been deleted.", "success")
+            db.session.commit()
+    if delete_form.is_submitted() and request.form.get('delete'):
         delete_bug(delete_form, bug)
         return redirect(url_for("bugs"))
     return render_template("show_bug.html", form=form, comments=comments,
@@ -330,13 +339,15 @@ def delete_bug(delete_form: DeleteBugForm, bug):
     flash(f'Bug {bug_id} is deleted.', 'success')
 
 
-@app.route("/test/")
+@app.route("/test/",  methods=["POST", "GET"])
 @app.route("/tests")
 @app.route("/test/<bug_id>", methods=["POST", "GET"])
 def test(bug_id=None):
     bug = Bug.query.get(bug_id)
+    comment_id = 12
     delete_form = DeleteBugForm()
-    return render_template("test_ui.html", bug=bug, delete_form=delete_form)
+    return render_template("test_ui.html", comment_id=comment_id, bug=bug,
+                           delete_form=delete_form)
 
 
 @app.route("/data")

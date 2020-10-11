@@ -129,7 +129,8 @@ ul.comments li.comment:hover {
     background-color: #f0f0f0;
 }
 div.comment-date {
-    float: right;
+    padding-left:6px;
+    font-size: 12px;
 }
 div.comment-author {
     font-weight: bold;
@@ -143,4 +144,12 @@ div.comment-content {
 }
 div.comment-form {
     margin: 16px 0px 16px 32px;
+}
+
+div.comment-options {
+    float:right;
+}
+
+.delete_comment_btn{
+    color: red;
 }

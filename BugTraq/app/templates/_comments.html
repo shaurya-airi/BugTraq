@@ -1,14 +1,72 @@
+<script>
+        $(document).on('show.bs.modal', '#deleteCommentModal',function(event){
+            var button = $(event.relatedTarget);
+            var comment_id = button.data('comment_id');
+            var modal = $(this)
+            modal.find('.modal-title').text('Are you sure you want to delete Comment ' + comment_id +'? This cannot be undone.')
+            modal.find('.confirmDeleteCommentBtn').val(comment_id)
+          })
+</script>
+
 <ul class="comments">
     {% for comment in comments %}
-        <li class="card">
+        <li class="card border-light">
             <div class="comment-thumbnail">
                 <a href="{{ url_for('user', username=comment.user.username) }}">
-                    <img class="img-rounded profile-thumbnail" src="{{ comment.user.avatar(size=36) }}">
+                    <img class="img-rounded profile-thumbnail" src="{{ comment.user.avatar(size=42) }}">
                 </a>
             </div>
             <div class="comment-content">
-                <div class="comment-date">{{ comment.timestamp }}</div>
-                <div class="comment-author"><a href="{{ url_for('user', username=comment.user.username) }}">{{ comment.user.username }}</a></div>
+                <div class="comment-author">
+                    <a href="{{ url_for('user', username=comment.user.username) }}">{{ comment.user.username }}</a>
+                    <span class="comment-date text-muted " style="font-size: 12px;">{{ comment.timestamp.strftime('%d/%m/%Y %H:%M') }}</span>
+                    <div class="comment-options">
+                        <div class="btn-group">
+                            <div class="btn-group dropleft" role="group">
+                                <button type="button" class="btn btn-light btn-sm dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <b>&#8230;</b>
+                                </button>
+                                <div class="modal fade" id="deleteCommentModal" aria-labelledby="deleteCommentModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteCommentModalLabel">Are you sure you want to delete Comment {{comment.id}}? This cannot be undone.</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                        <div class="col-md-2">
+                                                            <button type="button" class="btn btn-success cancelDeleteCommentButton" style="display:inline-block" data-dismiss="modal">No</button>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <form method="post" action="" novalidate>
+                                                                <button class="btn btn-danger confirmDeleteCommentBtn" type="submit" name="delete_comment" value="{{comment.id}}">Yes</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="dropdown-menu">
+                                        <!-- Inactive edit forms -->
+                                        <form id="edit_comment" method="post" action="" novalidate>
+                                            <button class="dropdown-item btn-sm" type="submit" name="edit_comment" value="{{comment.id}}">Edit Comment</button>
+                                        </form>
+                                        <!-- Dummy share link -->
+                                        <button class="dropdown-item btn-sm" type="submit">Share Link</button>
+                                        <div class="dropdown-divider"></div>
+                                        <!-- Button trigger for confirmation of delete -->
+                                        <button type="button" class="dropdown-item btn btn-sm delete_comment_btn" data-toggle="modal" data-target="#deleteCommentModal" data-comment_id={{comment.id}}>Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="comment-body">
                     {% if comment.disabled %}
                     <p><i>This comment has been disabled by a moderator.</i></p>

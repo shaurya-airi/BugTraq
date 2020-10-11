@@ -137,3 +137,11 @@ class DeleteBugForm(FlaskForm):
 class CommentForm(FlaskForm):
     body = StringField('', validators=[DataRequired()])
     submit = SubmitField("Submit")
+
+
+class EditCommentForm(FlaskForm):
+    save = SubmitField("Save Changes")
+
+
+class DeleteCommentForm(FlaskForm):
+    confirm_delete = SubmitField("Yes")
